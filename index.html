@@ -1651,7 +1651,7 @@ nav {
   /* ── 7. EXPERIENCE ── */
   #experience {
     padding: 12px 0 !important;
-    page-break-before: always;
+    page-break-before: auto;
   }
   .section-title {
     font-size: 18px !important;
@@ -1728,6 +1728,7 @@ nav {
     background: #fff !important;
     page-break-before: always;
   }
+  #experience { page-break-before: always; }
   .proj-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -1950,8 +1951,8 @@ nav {
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#testimonials">Testimonials</a></li>
   </ul>
@@ -1978,8 +1979,8 @@ nav {
 <div class="mob-nav" id="mob-nav">
   <button class="mob-nav-close" onclick="toggleNav()">✕</button>
   <a href="#about" onclick="toggleNav()">About</a>
-  <a href="#experience" onclick="toggleNav()">Experience</a>
   <a href="#projects" onclick="toggleNav()">Projects</a>
+  <a href="#experience" onclick="toggleNav()">Experience</a>
   <a href="#skills" onclick="toggleNav()">Skills</a>
   <a href="#testimonials" onclick="toggleNav()">Testimonials</a>
   <a href="#contact" onclick="toggleNav()">Let's Connect ↗</a>
@@ -2145,6 +2146,15 @@ nav {
   </div>
 </section>
 
+<!-- ═══ PROJECTS ═══════════════════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <span class="section-eyebrow fade">// Work</span>
+    <h2 class="section-title fade" style="transition-delay:.06s">Featured Projects</h2>
+    <div class="proj-grid" id="proj-grid"></div>
+  </div>
+</section>
+
 <!-- ═══ EXPERIENCE ═════════════════════════════════════════════════ -->
 <section id="experience">
   <div class="container">
@@ -2160,15 +2170,6 @@ nav {
       </div>
     </div>
     <div class="tl" id="tl"></div>
-  </div>
-</section>
-
-<!-- ═══ PROJECTS ═══════════════════════════════════════════════════ -->
-<section id="projects">
-  <div class="container">
-    <span class="section-eyebrow fade">// Work</span>
-    <h2 class="section-title fade" style="transition-delay:.06s">Featured Projects</h2>
-    <div class="proj-grid" id="proj-grid"></div>
   </div>
 </section>
 
@@ -2202,7 +2203,7 @@ nav {
   <div class="container">
     <span class="contact-ey">// Get in Touch</span>
     <h2 class="contact-h">Let's work<br><span>together.</span></h2>
-    <p class="contact-sub">Open to IT leadership, GRC, and cybersecurity roles.</p>
+    <p class="contact-sub">Open to IT leadership, GRC, cybersecurity, and AI/automation roles.<br>Passionate about building intelligent systems that solve real problems — not just writing policies.</p>
     <div class="contact-btns">
       <a href="#" class="btn-li" id="ct-li" target="_blank" rel="noopener">
         <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
