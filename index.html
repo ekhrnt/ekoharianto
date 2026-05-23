@@ -1054,6 +1054,18 @@ nav {
   margin-bottom: 18px;
 }
 .skill-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 768px) {
+  .skill-pills {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .spill {
+    justify-content: center !important;
+    font-size: 12.5px !important;
+    padding: 10px 12px !important;
+  }
+}
 
 .spill {
   display: inline-flex; align-items: center; gap: 8px;
@@ -1092,41 +1104,32 @@ nav {
 .testi-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: var(--rx);
-  padding: 28px;
+  padding: 20px 22px;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .5s, transform .5s, border-color .2s;
 }
 .testi-card.vis { opacity: 1; transform: translateY(0); }
-.testi-card:hover { border-color: var(--border-active); }
+.testi-card:hover { border-color: var(--accent); }
 
-.testi-qmark {
-  font-family: Georgia, serif;
-  font-size: 52px;
-  background: var(--gradient-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  opacity: .5;
-  line-height: 1;
-  margin-bottom: 10px;
-}
+.testi-qmark { display: none; }
 .testi-text {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.75;
   font-style: italic;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
-.testi-author { display: flex; align-items: center; gap: 13px; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
 .testi-av {
-  width: 42px; height: 42px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: var(--gradient-hero);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
-  font-size: 13px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   color: #fff;
   flex-shrink: 0;
 }
