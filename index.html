@@ -445,6 +445,18 @@ nav {
 }
 
 .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 768px) {
+  .hero-btns {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .btn-li, .btn-ghost, .btn-wa {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    justify-content: center !important;
+  }
+}
 
 /* Buttons */
 .btn-li {
@@ -585,13 +597,27 @@ nav {
 }
 
 /* Scroll hint */
-.scroll-hint {
-  position: absolute;
-  bottom: 32px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
-  opacity: .3; z-index: 2;
+.scroll-hint { display: none; }
+
+/* Scroll to top */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 90px; right: 24px;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-active);
+  color: var(--text-primary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 999;
 }
+.scroll-top-btn.visible {
+  opacity: 1; pointer-events: auto;
+}
+.scroll-top-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-2px); }
 .scroll-hint span { font-family: var(--font-mono); font-size: 9px; color: var(--text-primary); letter-spacing: .12em; }
 .scroll-arrow {
   width: 20px; height: 20px;
@@ -605,8 +631,9 @@ nav {
 /* ─── ABOUT / BENTO ───────────────────────────────────────────────── */
 #about {
   background: var(--bg-base);
-  padding: 100px 0;
+  padding: 100px 0 48px;
 }
+#projects { padding-top: 48px; }
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -676,8 +703,17 @@ nav {
   letter-spacing: -0.02em;
 }
 
-/* Stats row — 3 × col-span 4 */
-.bento-stat { grid-column: span 4; }
+/* Stats wrapper — 2×2 grid inside bento */
+.bento-stats-wrap {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .bento-stats-wrap { grid-template-columns: 1fr 1fr !important; }
+}
+.bento-stat { grid-column: span 1; }
 .bento-stat-num {
   font-family: var(--font-display);
   font-size: 52px; font-weight: 700;
@@ -803,7 +839,8 @@ nav {
 
 .tl-dot {
   position: absolute;
-  left: -28px; top: 22px;
+  left: -28px; top: 50%;
+  transform: translateY(-50%);
   width: 14px; height: 14px;
   border-radius: 50%;
   background: var(--bg-surface);
@@ -1925,6 +1962,12 @@ a.testi-name-link:hover {
   .proj-card-outer { grid-column: span 12 !important; }
   .bento-stat { grid-column: span 6; }
   .bento-grid { gap: 10px; }
+  .bento-stats-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    grid-column: span 12 !important;
+  }
   .testi-grid { grid-template-columns: 1fr; }
   .exp-top { flex-direction: column; align-items: flex-start; }
 }
@@ -2145,17 +2188,23 @@ a.testi-name-link:hover {
       </div>
 
       <!-- Stat cards -->
-      <div class="bento-card bento-stat fade" style="transition-delay:.14s">
-        <div class="bento-stat-num" id="in1">10+</div>
-        <div class="bento-stat-label" id="il1">Years Experience</div>
-      </div>
-      <div class="bento-card bento-stat fade" style="transition-delay:.18s">
-        <div class="bento-stat-num" id="in2">500+</div>
-        <div class="bento-stat-label" id="il2">Users Managed</div>
-      </div>
-      <div class="bento-card bento-stat fade" style="transition-delay:.22s">
-        <div class="bento-stat-num" id="in3">10</div>
-        <div class="bento-stat-label" id="il3">Companies</div>
+      <div class="bento-stats-wrap fade" style="transition-delay:.14s">
+        <div class="bento-card bento-stat">
+          <div class="bento-stat-num" id="in1">10+</div>
+          <div class="bento-stat-label" id="il1">Years Experience</div>
+        </div>
+        <div class="bento-card bento-stat">
+          <div class="bento-stat-num" id="in2">500+</div>
+          <div class="bento-stat-label" id="il2">Users Managed</div>
+        </div>
+        <div class="bento-card bento-stat">
+          <div class="bento-stat-num" id="in3">11</div>
+          <div class="bento-stat-label" id="il3">Projects Built</div>
+        </div>
+        <div class="bento-card bento-stat">
+          <div class="bento-stat-num" id="in4">4</div>
+          <div class="bento-stat-label" id="il4">Certifications</div>
+        </div>
       </div>
 
       <!-- Certs card -->
@@ -2265,6 +2314,11 @@ a.testi-name-link:hover {
     <p class="footer-copy" id="fcopy">© 2025 Eko Harianto. Built with ♥</p>
   </div>
 </section>
+
+<!-- Scroll To Top -->
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <!-- AI Chat FAB -->
 <button class="chat-fab" onclick="toggleChat()" aria-label="Chat with AI">
@@ -2516,9 +2570,7 @@ function renderSkills(skills) {
   skills.forEach(s => {
     const el = document.createElement('span');
     el.className = 'spill' + (s.highlight === 'true' ? ' hi' : '');
-    el.innerHTML = s.highlight === 'true'
-      ? `<span class="dot"></span>${s.skill}`
-      : s.skill;
+    el.innerHTML = s.skill;
     (s.highlight === 'true' ? hi : ot).appendChild(el);
   });
 }
@@ -2809,6 +2861,14 @@ initCountUps();
 </script>
 
 <script>
+// ── SCROLL TO TOP ─────────────────────────────────────
+(function() {
+  const btn = document.getElementById('scroll-top-btn');
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+})();
+
 // ── SPLASH CONTROLLER ─────────────────────────────────
 (function () {
   const splash = document.getElementById('splash');
