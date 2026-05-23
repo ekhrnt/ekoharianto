@@ -1027,62 +1027,118 @@ nav {
 .proj-card {
   background: var(--bg-surface);
   border-radius: calc(var(--rx) - 1.5px);
-  padding: 32px 28px 28px;
   position: relative;
   overflow: hidden;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-/* Subtle hover tint */
 .proj-card-outer:hover .proj-card { background: var(--bg-elevated); }
-.proj-card-outer:first-child .proj-card { min-height: 200px; }
 
-.proj-num {
-  position: absolute;
-  top: -20px; right: 20px;
-  font-family: var(--font-display);
-  font-size: 110px; font-weight: 800;
-  color: var(--border);
-  line-height: 1;
-  user-select: none; pointer-events: none;
-  letter-spacing: -0.05em;
-}
-.proj-title-row {
+/* ── Category header strip ── */
+.proj-cat-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  position: relative; z-index: 1;
+  gap: 9px;
+  padding: 11px 20px 11px 18px;
+  background: var(--proj-cat-bg, var(--accent-glow));
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  flex-shrink: 0;
 }
-.proj-title {
-  font-family: var(--font-display);
-  font-size: 18px; font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.3;
+.proj-cat-bar::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--proj-cat-color, var(--accent));
+  border-radius: 0;
+}
+.proj-cat-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.proj-cat-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--proj-cat-color, var(--accent));
+  flex: 1;
 }
 .proj-year {
   font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 500;
-  color: var(--accent);
-  background: var(--accent-glow);
-  border: 1px solid rgba(255,107,53,0.25);
+  font-weight: 600;
+  color: var(--proj-cat-color, var(--accent));
+  background: transparent;
+  border: 1px solid var(--proj-cat-color, var(--accent));
+  opacity: 0.7;
   border-radius: 4px;
   padding: 2px 7px;
   letter-spacing: 0.06em;
   white-space: nowrap;
   flex-shrink: 0;
 }
-.proj-desc {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  margin-bottom: 20px;
-  position: relative; z-index: 1;
+.proj-num {
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 800;
+  color: var(--proj-cat-color, var(--accent));
+  opacity: 0.12;
+  line-height: 1;
+  user-select: none; pointer-events: none;
+  letter-spacing: -0.03em;
 }
+
+/* ── Card body ── */
+.proj-card-body {
+  padding: 20px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.proj-title {
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+.proj-card-outer:first-child .proj-title { font-size: 20px; }
+
+/* ── Bullet points ── */
+.proj-bullets {
+  list-style: none;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+}
+.proj-bullets li {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.proj-bullets li .pb-arrow {
+  color: var(--proj-cat-color, var(--accent));
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 12px;
+}
+
+/* ── Tech chips ── */
 .proj-techs {
   display: flex; flex-wrap: wrap; gap: 6px;
-  position: relative; z-index: 1;
+  margin-top: auto;
 }
 .tech {
   font-family: var(--font-body);
@@ -1090,9 +1146,10 @@ nav {
   letter-spacing: 0;
   padding: 4px 10px;
   border-radius: 100px;
-  background: var(--accent-glow);
-  color: var(--accent);
-  border: 1px solid rgba(255,107,53,0.2);
+  background: var(--proj-cat-bg, var(--accent-glow));
+  color: var(--proj-cat-color, var(--accent));
+  border: 1px solid var(--proj-cat-color, rgba(255,107,53,0.2));
+  border-color: color-mix(in srgb, var(--proj-cat-color, var(--accent)) 25%, transparent);
 }
 
 /* ─── SKILLS ──────────────────────────────────────────────────────── */
@@ -1949,10 +2006,16 @@ a.testi-name-link:hover {
     color: rgba(0,0,0,0.06) !important;
     top: -12px !important;
   }
-  .proj-title-row { display: flex !important; align-items: center !important; gap: 6px !important; flex-wrap: wrap !important; margin-bottom: 5px !important; }
-  .proj-title { font-size: 11px !important; color: #111 !important; font-weight: 700 !important; }
-  .proj-year { font-size: 8px !important; color: #c8441b !important; background: #f0ece8 !important; border: 1px solid rgba(200,68,27,0.3) !important; border-radius: 3px !important; padding: 1px 5px !important; }
-  .proj-desc { font-size: 9.5px !important; color: #444 !important; line-height: 1.55 !important; margin-bottom: 8px !important; }
+  .proj-cat-bar { padding: 7px 12px !important; background: #f5f5f5 !important; border-bottom: 1px solid #e0e0e0 !important; }
+  .proj-cat-bar::before { display: none !important; }
+  .proj-cat-label { font-size: 8px !important; color: #555 !important; }
+  .proj-cat-icon { font-size: 12px !important; }
+  .proj-title { font-size: 11px !important; color: #111 !important; font-weight: 700 !important; margin-bottom: 8px !important; }
+  .proj-year { font-size: 8px !important; border: 1px solid #ccc !important; color: #555 !important; }
+  .proj-bullets { gap: 4px !important; margin-bottom: 8px !important; }
+  .proj-bullets li { font-size: 9px !important; color: #444 !important; gap: 6px !important; }
+  .proj-bullets li .pb-arrow { font-size: 9px !important; color: #c8441b !important; }
+  .proj-card-body { padding: 10px 12px !important; }
   .proj-techs { gap: 4px !important; }
   .tech {
     font-size: 8px !important;
@@ -2715,19 +2778,69 @@ function filterExp(type, btn) {
 /* ═══════════════════════════════════════════════════
    PROJECTS
 ═══════════════════════════════════════════════════ */
+/* ── Project category detector ── */
+function getProjCat(tech, title) {
+  const t = (tech + ' ' + title).toLowerCase();
+  if (t.includes('ai') || t.includes('llm') || t.includes('gpt') || t.includes('openclaw') || t.includes('quantum') || t.includes('underwriting') || t.includes('claims'))
+    return { label:'AI & Automation', icon:'🤖', color:'#7C3AED', bg:'rgba(124,58,237,0.1)' };
+  if (t.includes('iso') || t.includes('grc') || t.includes('audit') || t.includes('policy') || t.includes('dpo') || t.includes('ojk') || t.includes('compliance') || t.includes('uu pdp'))
+    return { label:'Governance & GRC', icon:'🛡️', color:'#22c55e', bg:'rgba(34,197,94,0.1)' };
+  if (t.includes('google apps script') || t.includes('gas') || t.includes('notification') || t.includes('whatsapp') || t.includes('email auto') || t.includes('ticketing') || t.includes('automation'))
+    return { label:'Automation', icon:'⚡', color:'#FF6B35', bg:'rgba(255,107,53,0.1)' };
+  if (t.includes('infrastructure') || t.includes('linux') || t.includes('proxmox') || t.includes('active directory') || t.includes('itsm') || t.includes('network') || t.includes('pms') || t.includes('freenas'))
+    return { label:'IT Infrastructure', icon:'🏗️', color:'#3B82F6', bg:'rgba(59,130,246,0.1)' };
+  if (t.includes('e-commerce') || t.includes('xendit') || t.includes('github pages') || t.includes('serabut') || t.includes('payment'))
+    return { label:'Product & Dev', icon:'🛒', color:'#EC4899', bg:'rgba(236,72,153,0.1)' };
+  if (t.includes('api integration') || t.includes('dukcapil') || t.includes('telecoms') || t.includes('migration') || t.includes('change management'))
+    return { label:'Integration & Ops', icon:'🔗', color:'#F59E0B', bg:'rgba(245,158,11,0.1)' };
+  if (t.includes('telegram') || t.includes('python') || t.includes('monitoring') || t.includes('bot'))
+    return { label:'Dev & Scripting', icon:'💻', color:'#06B6D4', bg:'rgba(6,182,212,0.1)' };
+  return { label:'IT Operations', icon:'🔧', color:'#64748B', bg:'rgba(100,116,139,0.1)' };
+}
+
+/* ── Split description into scannable bullet points ── */
+function descToBullets(desc) {
+  // Split on '. ' (sentence end), '— ', or '; '
+  const raw = desc
+    .replace(/\s*—\s*/g, '. ')
+    .split(/\.\s+/)
+    .map(s => s.replace(/\.$/, '').trim())
+    .filter(s => s.length > 15);
+  // Return max 3 bullets
+  return raw.slice(0, 3);
+}
+
 function renderProjects(projects) {
-  document.getElementById('proj-grid').innerHTML = projects.map(p => {
-    const techs = p.tech ? p.tech.split(',').map(t => t.trim()) : [];
+  document.getElementById('proj-grid').innerHTML = projects.map((p, idx) => {
+    const techs   = p.tech ? p.tech.split(',').map(t => t.trim()) : [];
+    const cat     = getProjCat(p.tech || '', p.title || '');
+    const bullets = descToBullets(p.description || '');
+
     return `
-    <div class="proj-card-outer fade">
+    <div class="proj-card-outer fade" style="--proj-cat-color:${cat.color};--proj-cat-bg:${cat.bg}">
       <div class="proj-card">
-      <div class="proj-num">${p.number}</div>
-      <div class="proj-title-row">
-        <div class="proj-title">${p.title}</div>
-        ${p.year ? `<span class="proj-year">${p.year}</span>` : ''}
-      </div>
-      <p class="proj-desc">${p.description}</p>
-      <div class="proj-techs">${techs.map(t => `<span class="tech">${t}</span>`).join('')}</div>
+
+        <!-- Category strip -->
+        <div class="proj-cat-bar">
+          <span class="proj-cat-icon">${cat.icon}</span>
+          <span class="proj-cat-label">${cat.label}</span>
+          ${p.year ? `<span class="proj-year">${p.year}</span>` : ''}
+          <span class="proj-num">${String(p.number).padStart(2,'0')}</span>
+        </div>
+
+        <!-- Body -->
+        <div class="proj-card-body">
+          <div class="proj-title">${p.title}</div>
+
+          <ul class="proj-bullets">
+            ${bullets.map(b => `<li><span class="pb-arrow">→</span><span>${b}</span></li>`).join('')}
+          </ul>
+
+          <div class="proj-techs">
+            ${techs.map(t => `<span class="tech">${t}</span>`).join('')}
+          </div>
+        </div>
+
       </div>
     </div>`;
   }).join('');
