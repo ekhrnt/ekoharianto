@@ -1485,7 +1485,8 @@ a.testi-name-link:hover {
   display: flex; align-items: center; justify-content: center;
   flex-direction: column;
   overflow: hidden;
-  pointer-events: none;
+  pointer-events: auto; /* clickable so tap = audio unlock gesture */
+  cursor: default;
 }
 
 /* noise grain overlay */
@@ -3008,48 +3009,70 @@ initCountUps();
   const CHAR_DUR  = 90;
   const EXTRA = [0,60,40,80,30,50,0,70,50,60,40,30,80,50,40,60];
 
-  // ── Keyboard click sound via Web Audio API (no external files) ──
-  // Create AudioContext immediately and try to resume on any user gesture
-  let audioCtx = null;
-  function getAudioCtx() {
-    if (!audioCtx) {
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(()=>{});
-    }
-    return audioCtx;
+  // ── Mechanical keyboard sound via Web Audio API ──
+  // IMPORTANT: only create AudioContext on first user gesture (no auto-create)
+  // so Chrome never shows the "Allow audio" dialog.
+  let _ctx = null;
+  let _audioReady = false;
+
+  function unlockAudio() {
+    if (_audioReady) return;
+    try {
+      _ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (_ctx.state === 'suspended') _ctx.resume();
+      _audioReady = true;
+    } catch(e) {}
   }
-  // Resume on first touch/click (covers mobile navigation gesture)
-  const _unlockAudio = () => { getAudioCtx(); };
-  ['touchstart','mousedown','keydown','pointerdown'].forEach(ev =>
-    document.addEventListener(ev, _unlockAudio, { once: true, passive: true })
-  );
-  // Try immediately (works when page opened from a tap/click on mobile)
-  getAudioCtx();
+
+  // Unlock on any gesture on the splash (tap/click = first gesture)
+  splash.addEventListener('pointerdown', unlockAudio, { passive: true });
+  splash.addEventListener('touchstart',  unlockAudio, { passive: true });
+  // Also catch keyboard / other interactions
+  document.addEventListener('keydown', unlockAudio, { once: true });
 
   function playKeyClick() {
+    if (!_audioReady || !_ctx || _ctx.state !== 'running') return;
     try {
-      const ctx = getAudioCtx();
-      if (!ctx || ctx.state !== 'running') return;
-      // Short noise burst → mechanical key click
-      const bufLen = ctx.sampleRate * 0.04; // 40ms
-      const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let k = 0; k < bufLen; k++) {
-        data[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / bufLen, 3);
+      const ctx = _ctx;
+      const t = ctx.currentTime;
+
+      // ① Sharp click transient — high-freq noise burst (the "tick" of switch)
+      const clickLen = Math.floor(ctx.sampleRate * 0.007); // 7ms
+      const clickBuf = ctx.createBuffer(1, clickLen, ctx.sampleRate);
+      const clickData = clickBuf.getChannelData(0);
+      for (let k = 0; k < clickLen; k++) {
+        clickData[k] = (Math.random() * 2 - 1) * (1 - k / clickLen);
       }
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      const bpf = ctx.createBiquadFilter();
-      bpf.type = 'bandpass';
-      bpf.frequency.value = 1800 + Math.random() * 400;
-      bpf.Q.value = 0.8;
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-      src.connect(bpf); bpf.connect(gain); gain.connect(ctx.destination);
-      src.start();
+      const clickSrc = ctx.createBufferSource();
+      clickSrc.buffer = clickBuf;
+      const hpf = ctx.createBiquadFilter();
+      hpf.type = 'highpass'; hpf.frequency.value = 2400 + Math.random() * 600;
+      const clickGain = ctx.createGain();
+      clickGain.gain.setValueAtTime(0.55, t);
+      clickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.007);
+      clickSrc.connect(hpf); hpf.connect(clickGain); clickGain.connect(ctx.destination);
+      clickSrc.start(t);
+
+      // ② Body thud — low-freq oscillator sweep (key bottoming out)
+      const thud = ctx.createOscillator();
+      thud.type = 'sine';
+      thud.frequency.setValueAtTime(220 + Math.random() * 40, t);
+      thud.frequency.exponentialRampToValueAtTime(70, t + 0.018);
+      const thudGain = ctx.createGain();
+      thudGain.gain.setValueAtTime(0.22, t);
+      thudGain.gain.exponentialRampToValueAtTime(0.001, t + 0.022);
+      thud.connect(thudGain); thudGain.connect(ctx.destination);
+      thud.start(t); thud.stop(t + 0.025);
+
+      // ③ Subtle mid-click (switch actuation feel)
+      const mid = ctx.createOscillator();
+      mid.type = 'square';
+      mid.frequency.value = 800 + Math.random() * 200;
+      const midGain = ctx.createGain();
+      midGain.gain.setValueAtTime(0.04, t);
+      midGain.gain.exponentialRampToValueAtTime(0.001, t + 0.006);
+      mid.connect(midGain); midGain.connect(ctx.destination);
+      mid.start(t); mid.stop(t + 0.008);
     } catch(e) {}
   }
 
