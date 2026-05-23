@@ -400,7 +400,7 @@ nav {
 .hero-name {
   font-family: var(--font-display);
   font-size: clamp(52px, 7.5vw, 108px);
-  line-height: 0.95;
+  line-height: 1;
   letter-spacing: -0.04em;
   margin-bottom: 18px;
 }
@@ -416,6 +416,7 @@ nav {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  padding-bottom: 0.08em; /* prevent gradient clip on descenders/brackets */
 }
 
 .hero-title {
@@ -2534,12 +2535,16 @@ function renderProfile(p) {
     });
   }
 
-  // photo — extract Drive file ID and use lh3 CDN (no CORS issues)
+  // photo — try thumbnail CDN first, fallback to lh3
   if (p.photo) {
     const match = p.photo.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (match) {
       const fileId = match[1];
-      document.getElementById('ph-img').src = `https://lh3.googleusercontent.com/d/${fileId}=w400`;
+      const img = document.getElementById('ph-img');
+      const primary   = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+      const secondary = `https://lh3.googleusercontent.com/d/${fileId}=w400`;
+      img.onerror = () => { img.onerror = null; img.src = secondary; };
+      img.src = primary;
     }
   }
 
@@ -3001,12 +3006,30 @@ initCountUps();
   const EXTRA = [0,60,40,80,30,50,0,70,50,60,40,30,80,50,40,60];
 
   // ── Keyboard click sound via Web Audio API (no external files) ──
+  // Create AudioContext immediately and try to resume on any user gesture
   let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(()=>{});
+    }
+    return audioCtx;
+  }
+  // Resume on first touch/click (covers mobile navigation gesture)
+  const _unlockAudio = () => { getAudioCtx(); };
+  ['touchstart','mousedown','keydown','pointerdown'].forEach(ev =>
+    document.addEventListener(ev, _unlockAudio, { once: true, passive: true })
+  );
+  // Try immediately (works when page opened from a tap/click on mobile)
+  getAudioCtx();
+
   function playKeyClick() {
     try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = audioCtx;
-      // Short noise burst to mimic mechanical key
+      const ctx = getAudioCtx();
+      if (!ctx || ctx.state !== 'running') return;
+      // Short noise burst → mechanical key click
       const bufLen = ctx.sampleRate * 0.04; // 40ms
       const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
       const data = buf.getChannelData(0);
@@ -3015,17 +3038,14 @@ initCountUps();
       }
       const src = ctx.createBufferSource();
       src.buffer = buf;
-      // Band-pass filter to get clicky keyboard tone
       const bpf = ctx.createBiquadFilter();
       bpf.type = 'bandpass';
       bpf.frequency.value = 1800 + Math.random() * 400;
       bpf.Q.value = 0.8;
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-      src.connect(bpf);
-      bpf.connect(gain);
-      gain.connect(ctx.destination);
+      src.connect(bpf); bpf.connect(gain); gain.connect(ctx.destination);
       src.start();
     } catch(e) {}
   }
