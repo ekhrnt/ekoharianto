@@ -724,6 +724,7 @@ nav {
   line-height: 1;
   margin-bottom: 8px;
   letter-spacing: -0.03em;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .bento-stat-label {
   font-family: var(--font-mono);
@@ -731,6 +732,7 @@ nav {
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  transition: opacity 0.3s ease;
 }
 
 /* Certs — col-span 12 */
@@ -2200,8 +2202,8 @@ a.testi-name-link:hover {
             <div class="h-stat-lbl" id="sl1">Years Exp.</div>
           </div>
           <div class="h-stat">
-            <div class="h-stat-val" id="sv2">500+</div>
-            <div class="h-stat-lbl" id="sl2">Users Mgd.</div>
+            <div class="h-stat-val" id="sv2">4</div>
+            <div class="h-stat-lbl" id="sl2">Certifications</div>
           </div>
           <div class="h-stat">
             <div class="h-stat-val" id="sv3">10</div>
@@ -2259,12 +2261,12 @@ a.testi-name-link:hover {
           <div class="bento-stat-label" id="il2">Users Managed</div>
         </div>
         <div class="bento-card bento-stat">
-          <div class="bento-stat-num" id="in3">11</div>
-          <div class="bento-stat-label" id="il3">Projects Built</div>
+          <div class="bento-stat-num" id="in3">4</div>
+          <div class="bento-stat-label" id="il3">Certifications</div>
         </div>
         <div class="bento-card bento-stat">
-          <div class="bento-stat-num" id="in4">4</div>
-          <div class="bento-stat-label" id="il4">Certifications</div>
+          <div class="bento-stat-num" id="in4">11</div>
+          <div class="bento-stat-label" id="il4">Projects Built</div>
         </div>
       </div>
 
@@ -2489,18 +2491,26 @@ function renderProfile(p) {
   document.getElementById('nav-logo').innerHTML = `${nick}<em style="font-style:normal;background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">.</em>`;
 
   document.getElementById('hero-name').innerHTML = `<span class="hero-name-first">${(p.name||'Eko Harianto').split(' ')[0]}</span><span class="hero-name-last">${(p.name||'Eko Harianto').split(' ').slice(1).join(' ')}</span>`;
-  document.getElementById('hero-title').innerHTML = `${p.title || 'AVP, Head of IT'}<span class="tw-cursor"></span>`;
+  document.getElementById('hero-title').innerHTML = `${p.title || 'Head of IT'}<span class="tw-cursor"></span>`;
   document.getElementById('hero-tagline').textContent = p.tagline || '';
   document.getElementById('bio1').textContent = p.bio1 || '';
   document.getElementById('bio2').textContent = p.bio2 || '';
 
   if (p.available === 'true') document.getElementById('avail-badge').style.display = 'inline-flex';
 
-  // stats
-  setS('sv1','sl1','in1','il1', p.m1_val, p.m1_label);
-  setS('sv2','sl2','in2','il2', p.m2_val, p.m2_label);
-  setS('sv3','sl3','in3','il3', p.m3_val, p.m3_label);
-  if (p.m4_val) setS(null,null,'in4','il4', p.m4_val, p.m4_label);
+  // Hero stats (static, from sheets)
+  if (p.m1_val) { document.getElementById('sv1').textContent = p.m1_val; document.getElementById('sl1').textContent = p.m1_label; }
+  if (p.m2_val) { document.getElementById('sv2').textContent = p.m2_val; document.getElementById('sl2').textContent = p.m2_label; }
+  if (p.m3_val) { document.getElementById('sv3').textContent = p.m3_val; document.getElementById('sl3').textContent = p.m3_label; }
+
+  // Bento stats — cycling pool (all 4 cards rotate through these values)
+  const statPool = [
+    { v: p.m1_val || '10+', l: p.m1_label || 'Years Experience' },
+    { v: '500+',             l: 'Users Managed' },
+    { v: p.m2_val || '4',   l: p.m2_label || 'Certifications' },
+    { v: p.m3_val || '11',  l: p.m3_label || 'Projects Built' },
+  ];
+  startStatCycler(statPool);
 
   if (p.linkedin) {
     document.getElementById('btn-li').href = p.linkedin;
@@ -2534,13 +2544,53 @@ function renderProfile(p) {
   }
 
   // Start typewriter after profile is set
-  startTypewriter(p.title || 'AVP, Head of IT');
+  startTypewriter(p.title || 'Head of IT');
 }
 
 function setS(vId, lId, iId, ilId, val, lbl) {
   if (!val) return;
-  [vId, iId].forEach(id => document.getElementById(id).textContent = val);
-  [lId, ilId].forEach(id => document.getElementById(id).textContent = lbl);
+  [vId, iId].filter(Boolean).forEach(id => { const el=document.getElementById(id); if(el) el.textContent = val; });
+  [lId, ilId].filter(Boolean).forEach(id => { const el=document.getElementById(id); if(el) el.textContent = lbl; });
+}
+
+/* ── Bento stat card cycler ──────────────────────────────────────── */
+function startStatCycler(pool) {
+  const CARDS = [
+    { n: 'in1', l: 'il1' },
+    { n: 'in2', l: 'il2' },
+    { n: 'in3', l: 'il3' },
+    { n: 'in4', l: 'il4' },
+  ];
+  // Set initial values: each card starts at a different index in the pool
+  CARDS.forEach((c, i) => {
+    const el = document.getElementById(c.n);
+    const ll = document.getElementById(c.l);
+    if (el) el.textContent = pool[i % pool.length].v;
+    if (ll) ll.textContent = pool[i % pool.length].l;
+  });
+
+  let step = 0;
+  setInterval(() => {
+    step++;
+    CARDS.forEach((c, i) => {
+      const nEl = document.getElementById(c.n);
+      const lEl = document.getElementById(c.l);
+      if (!nEl || !lEl) return;
+      // Stagger each card by 120ms
+      setTimeout(() => {
+        nEl.style.opacity = '0';
+        nEl.style.transform = 'translateY(-10px)';
+        lEl.style.opacity = '0';
+        setTimeout(() => {
+          nEl.textContent = pool[(i + step) % pool.length].v;
+          lEl.textContent = pool[(i + step) % pool.length].l;
+          nEl.style.opacity = '1';
+          nEl.style.transform = 'translateY(0)';
+          lEl.style.opacity = '1';
+        }, 320);
+      }, i * 120);
+    });
+  }, 3500);
 }
 
 /* ═══════════════════════════════════════════════════
