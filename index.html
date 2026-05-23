@@ -1525,37 +1525,39 @@ a.testi-name-link:hover {
 
 /* ── letters ── */
 .splash-text-wrap {
-  display: flex; align-items: baseline;
-  gap: 2px; position: relative;
+  display: flex; align-items: center;
+  position: relative; min-height: clamp(80px,22vw,140px);
 }
 
-.splash-text-wrap span {
+#splash-typed {
   font-family: 'Space Grotesk', 'Syne', sans-serif;
   font-size: clamp(80px, 22vw, 140px);
   font-weight: 800;
-  letter-spacing: -6px;
+  letter-spacing: -4px;
   line-height: 1;
-  opacity: 0;
-  filter: blur(24px);
-  transform: scale(0.6) translateY(30px);
-  animation: letterReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  color: #f0f0f0;
 }
 
-.splash-k { animation-delay: 0.1s;  color: #f5f5f5; }
-.splash-o { animation-delay: 0.22s; color: #eeeeee; }
-.splash-r { animation-delay: 0.34s; color: #e8e8e8; }
-.splash-i {
-  animation-delay: 0.46s;
-  color: #FF6B35;
-  filter: blur(24px);
-  animation: letterReveal 0.6s 0.46s cubic-bezier(0.22,1,0.36,1) forwards, accentGlow 1.5s 1.2s ease-in-out infinite alternate;
+/* last char "I" gets accent */
+#splash-typed .accent { color: #FF6B35; text-shadow: 0 0 40px rgba(255,107,53,0.6); }
+
+/* blinking cursor */
+#splash-cursor {
+  display: inline-block;
+  width: 4px;
+  height: clamp(60px, 16vw, 110px);
+  background: #FF6B35;
+  border-radius: 2px;
+  margin-left: 4px;
+  vertical-align: middle;
+  box-shadow: 0 0 14px rgba(255,107,53,0.7);
+  animation: cursorBlink 0.6s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
 
-@keyframes letterReveal {
-  0%   { opacity: 0; filter: blur(24px); transform: scale(0.6) translateY(30px); }
-  60%  { filter: blur(2px); }
-  100% { opacity: 1; filter: blur(0);    transform: scale(1) translateY(0); }
-}
 @keyframes accentGlow {
   from { text-shadow: 0 0 20px rgba(255,107,53,0.4); }
   to   { text-shadow: 0 0 50px rgba(255,107,53,0.85), 0 0 100px rgba(255,107,53,0.3); }
@@ -2042,10 +2044,7 @@ a.testi-name-link:hover {
 <div id="splash">
   <div class="splash-inner">
     <div class="splash-text-wrap">
-      <span class="splash-k">K</span>
-      <span class="splash-o">O</span>
-      <span class="splash-r">R</span>
-      <span class="splash-i">I</span>
+      <span id="splash-typed"></span><span id="splash-cursor"></span>
     </div>
     <div class="splash-line"></div>
     <p class="splash-sub">Portfolio</p>
@@ -2931,18 +2930,49 @@ initCountUps();
 
 // ── SPLASH CONTROLLER ─────────────────────────────────
 (function () {
-  const splash = document.getElementById('splash');
+  const splash  = document.getElementById('splash');
   if (!splash) { if (typeof init === 'function') init(); return; }
 
-  const SPLASH_DURATION = 2000;
+  const typedEl  = document.getElementById('splash-typed');
+  const cursorEl = document.getElementById('splash-cursor');
+  const WORD     = 'KORI';
+  const DELAYS   = [0, 180, 160, 200]; // ms between each keystroke (irregular = natural)
+  const CHAR_DUR = 120; // ms per char display
 
-  setTimeout(() => {
+  // Type each letter with staggered timing
+  let typed = '';
+  let i = 0;
+
+  function typeNext() {
+    if (i >= WORD.length) {
+      // All typed — hide cursor after short pause, then exit
+      setTimeout(() => {
+        cursorEl.style.display = 'none';
+        // Glow on the I
+        typedEl.innerHTML = 'KOR<span class="accent">I</span>';
+      }, 300);
+      setTimeout(exitSplash, 900);
+      return;
+    }
+    setTimeout(() => {
+      typed += WORD[i];
+      if (i === WORD.length - 1) {
+        typedEl.innerHTML = typed.slice(0, -1) + '<span class="accent">' + typed.slice(-1) + '</span>';
+      } else {
+        typedEl.textContent = typed;
+      }
+      i++;
+      typeNext();
+    }, i === 0 ? 600 : CHAR_DUR + DELAYS[i] || CHAR_DUR);
+  }
+
+  typeNext();
+
+  function exitSplash() {
     splash.classList.add('exit');
-    splash.addEventListener('animationend', () => {
-      splash.remove();
-    }, { once: true });
+    splash.addEventListener('animationend', () => splash.remove(), { once: true });
     if (typeof init === 'function') init();
-  }, SPLASH_DURATION);
+  }
 })();
 // ──────────────────────────────────────────────────────
 </script>
