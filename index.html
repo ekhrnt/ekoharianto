@@ -216,6 +216,28 @@ nav {
 }
 .nav-hire-btn:hover { opacity: .88; transform: translateY(-1px); }
 
+.nav-print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--r);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: 0.01em;
+}
+.nav-print-btn:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+}
+
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
 .hamburger span { display: block; width: 22px; height: 2px; background: var(--text-secondary); border-radius: 2px; transition: .3s; }
 
@@ -1374,6 +1396,82 @@ nav {
 }
 .fade.vis { opacity: 1; transform: translateY(0); }
 
+/* ─── PRINT ───────────────────────────────────────────────────────── */
+@media print {
+  /* Force light theme for printing */
+  :root {
+    --bg-base: #ffffff; --bg-surface: #ffffff; --bg-elevated: #f8f8f8;
+    --border: #e0e0e0; --border-active: #cccccc;
+    --text-primary: #0a0a0a; --text-secondary: #444444; --text-tertiary: #888888;
+    --accent: #c8441b; --accent2: #5b21b6;
+  }
+
+  /* Hide everything not needed for print */
+  nav, .chat-fab, #chat-panel, #cert-modal-bg,
+  #ls, #err, .scroll-hint, .mob-nav,
+  .hero-btns, .visitor-pill, .filter-bar,
+  .nav-print-btn, .nav-theme-btn, .nav-hire-btn, .hamburger,
+  .photo-ring, .tech-chips-row, .avail-badge { display: none !important; }
+
+  /* Reset page */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff !important; color: #0a0a0a !important; }
+  section { padding: 28px 0 !important; }
+  .container { width: 100% !important; padding: 0 32px !important; }
+
+  /* Hero — compact */
+  #hero {
+    min-height: unset !important;
+    padding: 32px 0 20px !important;
+    background: #fff !important;
+  }
+  .hero-grid { grid-template-columns: 1fr 160px !important; gap: 24px !important; }
+  .hero-name { font-size: 42px !important; }
+  .hero-subtitle { font-size: 16px !important; }
+  .hero-tagline { font-size: 13px !important; }
+  .photo-circle { width: 120px !important; height: 120px !important; border: 2px solid #ddd !important; }
+  .hero-stats { gap: 8px !important; }
+  .h-stat { padding: 8px !important; }
+  .h-stat-val { font-size: 18px !important; }
+
+  /* Bento → linear */
+  .bento-grid { display: block !important; }
+  .bento-card { margin-bottom: 16px !important; border: 1px solid #e0e0e0 !important; border-radius: 8px !important; padding: 16px !important; break-inside: avoid; }
+
+  /* Experience — expand all */
+  .tl-body { max-height: none !important; }
+  .tl-body-in { display: block !important; }
+  .tl-chevron { display: none !important; }
+  .tl::before { background: #c8441b !important; }
+  .tl-card { border: 1px solid #e0e0e0 !important; break-inside: avoid; }
+
+  /* Projects grid → 2 col */
+  .proj-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .proj-card-outer, .proj-card-outer:first-child { grid-column: span 1 !important; background: #e0e0e0 !important; padding: 1px !important; }
+  .proj-card { padding: 16px !important; break-inside: avoid; }
+  .proj-num { font-size: 60px !important; }
+
+  /* Skills */
+  .skill-pills { gap: 6px !important; }
+  .spill { padding: 6px 12px !important; font-size: 12px !important; }
+
+  /* Testimonials */
+  .testi-grid { grid-template-columns: 1fr 1fr !important; }
+  .testi-card { break-inside: avoid; padding: 14px !important; }
+
+  /* Contact/Footer hidden */
+  #contact { display: none !important; }
+
+  /* Animation overrides */
+  .fade { opacity: 1 !important; transform: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+
+  /* Page breaks */
+  #experience { page-break-before: always; }
+  #projects   { page-break-before: always; }
+  #skills     { page-break-before: auto; }
+}
+
 /* ─── RESPONSIVE ──────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .proj-card-outer { grid-column: span 6; }
@@ -1467,6 +1565,10 @@ nav {
       <span class="visitor-label">views</span>
     </div>
     <button class="nav-theme-btn" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="Toggle theme">🌙</button>
+    <button class="nav-print-btn" onclick="window.print()" aria-label="Print resume" title="Print / Save as PDF">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print
+    </button>
     <a href="#contact" class="nav-hire-btn">Hire Me ↗</a>
     <button class="hamburger" id="hbg" onclick="toggleNav()" aria-label="Menu">
       <span></span><span></span><span></span>
