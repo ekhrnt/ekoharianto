@@ -1531,11 +1531,12 @@ a.testi-name-link:hover {
 
 #splash-typed {
   font-family: 'Space Grotesk', 'Syne', sans-serif;
-  font-size: clamp(80px, 22vw, 140px);
+  font-size: clamp(36px, 9vw, 72px);
   font-weight: 800;
-  letter-spacing: -4px;
+  letter-spacing: -1px;
   line-height: 1;
   color: #f0f0f0;
+  white-space: nowrap;
 }
 
 /* last char "I" gets accent */
@@ -1544,8 +1545,8 @@ a.testi-name-link:hover {
 /* blinking cursor */
 #splash-cursor {
   display: inline-block;
-  width: 4px;
-  height: clamp(60px, 16vw, 110px);
+  width: 3px;
+  height: clamp(28px, 7vw, 56px);
   background: #FF6B35;
   border-radius: 2px;
   margin-left: 4px;
@@ -2047,7 +2048,6 @@ a.testi-name-link:hover {
       <span id="splash-typed"></span><span id="splash-cursor"></span>
     </div>
     <div class="splash-line"></div>
-    <p class="splash-sub">Portfolio</p>
   </div>
   <div class="splash-progress"></div>
 </div>
@@ -2935,35 +2935,36 @@ initCountUps();
 
   const typedEl  = document.getElementById('splash-typed');
   const cursorEl = document.getElementById('splash-cursor');
-  const WORD     = 'KORI';
-  const DELAYS   = [0, 180, 160, 200]; // ms between each keystroke (irregular = natural)
-  const CHAR_DUR = 120; // ms per char display
+  // "Kori's Portfolio" — accent starts at "Portfolio"
+  const WORD      = "Kori's Portfolio";
+  const ACCENT_AT = 7; // index where accent color starts ("Portfolio")
+  const CHAR_DUR  = 90; // ms per char
+  // Natural typing rhythm — slight irregularity
+  const EXTRA = [0,60,40,80,30,50,0,70,50,60,40,30,80,50,40,60];
 
-  // Type each letter with staggered timing
   let typed = '';
   let i = 0;
 
   function typeNext() {
     if (i >= WORD.length) {
-      // All typed — hide cursor after short pause, then exit
-      setTimeout(() => {
-        cursorEl.style.display = 'none';
-        // Glow on the I
-        typedEl.innerHTML = 'KOR<span class="accent">I</span>';
-      }, 300);
-      setTimeout(exitSplash, 900);
+      // Done — pause cursor then exit
+      setTimeout(() => { cursorEl.style.display = 'none'; }, 400);
+      setTimeout(exitSplash, 1000);
       return;
     }
     setTimeout(() => {
       typed += WORD[i];
-      if (i === WORD.length - 1) {
-        typedEl.innerHTML = typed.slice(0, -1) + '<span class="accent">' + typed.slice(-1) + '</span>';
+      // Render: chars before ACCENT_AT normal, from ACCENT_AT onward accent
+      if (i >= ACCENT_AT - 1) {
+        typedEl.innerHTML =
+          typed.slice(0, ACCENT_AT) +
+          '<span class="accent">' + typed.slice(ACCENT_AT) + '</span>';
       } else {
         typedEl.textContent = typed;
       }
       i++;
       typeNext();
-    }, i === 0 ? 600 : CHAR_DUR + DELAYS[i] || CHAR_DUR);
+    }, i === 0 ? 500 : CHAR_DUR + (EXTRA[i % EXTRA.length] || 0));
   }
 
   typeNext();
