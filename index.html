@@ -936,34 +936,35 @@ nav {
   grid-template-columns: repeat(12, 1fr);
   gap: 14px;
 }
-.proj-card {
+/* Gradient border wrapper approach — no bleeding */
+.proj-card-outer {
   grid-column: span 6;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
   border-radius: var(--rx);
+  padding: 1.5px;
+  background: var(--border);
+  transition: background .3s, transform .25s;
+  position: relative;
+}
+.proj-card-outer:first-child { grid-column: span 12; }
+.proj-card-outer:hover {
+  transform: translateY(-3px);
+  background: conic-gradient(from var(--angle, 0deg), var(--accent), var(--accent2), var(--accent));
+  animation: spin-conic 3s linear infinite;
+}
+@property --angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes spin-conic { to { --angle: 360deg; } }
+
+.proj-card {
+  background: var(--bg-surface);
+  border-radius: calc(var(--rx) - 1.5px);
   padding: 32px 28px 28px;
   position: relative;
   overflow: hidden;
-  transition: border-color .25s, transform .25s;
+  height: 100%;
 }
-.proj-card:first-child { grid-column: span 12; }
-.proj-card:hover {
-  border-color: var(--border-active);
-  transform: translateY(-3px);
-}
-.proj-card::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: var(--rx);
-  background: conic-gradient(from var(--angle, 0deg), var(--accent), var(--accent2), var(--accent));
-  opacity: 0;
-  z-index: -1;
-  transition: opacity .3s;
-}
-.proj-card:hover::after { opacity: 1; --angle: 0deg; animation: spin-conic 3s linear infinite; }
-@property --angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-@keyframes spin-conic { to { --angle: 360deg; } }
+/* Subtle hover tint */
+.proj-card-outer:hover .proj-card { background: var(--bg-elevated); }
+.proj-card-outer:first-child .proj-card { min-height: 200px; }
 
 .proj-num {
   position: absolute;
@@ -1375,8 +1376,8 @@ nav {
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .proj-card { grid-column: span 6; }
-  .proj-card:first-child { grid-column: span 12; }
+  .proj-card-outer { grid-column: span 6; }
+  .proj-card-outer:first-child { grid-column: span 12; }
   .bento-bio { grid-column: span 12; }
   .bento-location { grid-column: span 12; }
   .bento-stat { grid-column: span 4; }
@@ -1394,7 +1395,7 @@ nav {
   #visitor-pill-nav { display: none !important; }
   .nav-hire-btn { display: none; }
   .photo-wrap, .photo-circle { width: 200px; height: 200px; }
-  .proj-card { grid-column: span 12 !important; }
+  .proj-card-outer { grid-column: span 12 !important; }
   .bento-stat { grid-column: span 12; }
   .bento-grid { gap: 10px; }
   .testi-grid { grid-template-columns: 1fr; }
@@ -1947,11 +1948,13 @@ function renderProjects(projects) {
   document.getElementById('proj-grid').innerHTML = projects.map(p => {
     const techs = p.tech ? p.tech.split(',').map(t => t.trim()) : [];
     return `
-    <div class="proj-card fade">
+    <div class="proj-card-outer fade">
+      <div class="proj-card">
       <div class="proj-num">${p.number}</div>
       <div class="proj-title">${p.title}</div>
       <p class="proj-desc">${p.description}</p>
       <div class="proj-techs">${techs.map(t => `<span class="tech">${t}</span>`).join('')}</div>
+      </div>
     </div>`;
   }).join('');
 }
