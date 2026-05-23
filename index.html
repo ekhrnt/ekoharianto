@@ -1397,7 +1397,84 @@ nav {
 .fade.vis { opacity: 1; transform: translateY(0); }
 
 /* ─── PRINT ───────────────────────────────────────────────────────── */
+/* ── SPLASH ─────────────────────────────────────────── */
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+#splash.exit {
+  animation: splashExit 0.55s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+@keyframes splashExit {
+  0%   { opacity: 1; transform: scale(1); }
+  40%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0; transform: scale(0.96); }
+}
+.splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.splash-text-wrap {
+  display: flex;
+  gap: 0px;
+  overflow: hidden;
+}
+.splash-text-wrap span {
+  font-family: 'Space Grotesk', 'Syne', sans-serif;
+  font-size: clamp(72px, 18vw, 128px);
+  font-weight: 700;
+  color: #f0f0f0;
+  letter-spacing: -4px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(60px);
+  animation: letterRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.splash-k { animation-delay: 0.05s; }
+.splash-o { animation-delay: 0.13s; }
+.splash-r { animation-delay: 0.21s; }
+.splash-i {
+  animation-delay: 0.29s;
+  color: #FF6B35;
+  text-shadow: 0 0 40px rgba(255,107,53,0.5);
+}
+@keyframes letterRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+.splash-line {
+  width: 0%;
+  height: 1.5px;
+  background: linear-gradient(90deg, #FF6B35, #7C3AED);
+  animation: lineExpand 0.4s 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes lineExpand {
+  to { width: 100%; }
+}
+.splash-sub {
+  font-family: 'Space Mono', 'DM Sans', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #444;
+  opacity: 0;
+  animation: subFade 0.4s 0.75s ease forwards;
+}
+@keyframes subFade {
+  to { opacity: 1; color: #888; }
+}
+/* ─────────────────────────────────────────────────── */
+
 @media print {
+  #splash { display: none !important; }
   @page { margin: 16mm 14mm; size: A4; }
 
   /* ── 1. GLOBAL RESET ── */
@@ -1431,6 +1508,14 @@ nav {
   #contact,
   .tech-chips-row,
   .section-eyebrow { display: none !important; }
+
+  /* ── 2b. GLOBAL BREAK PREVENTION ── */
+  p, li, h1, h2, h3, h4 { orphans: 3; widows: 3; }
+  .tl-card, .proj-card, .proj-card-outer,
+  .testi-card, .bento-card, .tl-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
 
   /* ── 3. RESET ALL BACKGROUNDS / COLORS ── */
   section, div, article, aside, header, footer {
@@ -1816,6 +1901,20 @@ nav {
 </style>
 </head>
 <body>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-text-wrap">
+      <span class="splash-k">K</span>
+      <span class="splash-o">O</span>
+      <span class="splash-r">R</span>
+      <span class="splash-i">I</span>
+    </div>
+    <div class="splash-line"></div>
+    <p class="splash-sub">Portfolio</p>
+  </div>
+</div>
 
 <!-- Cert Modal -->
 <div class="cert-modal-bg" id="cert-modal-bg" onclick="closeCertModal(event)">
@@ -2523,7 +2622,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeCertModal();
 });
 
-init();
+// init() is called by splash controller below
 trackVisit();
 
 /* ═══════════════════════════════════════════════════
@@ -2657,6 +2756,25 @@ function initCountUps() {
   });
 }
 initCountUps();
+</script>
+
+<script>
+// ── SPLASH CONTROLLER ─────────────────────────────────
+(function () {
+  const splash = document.getElementById('splash');
+  if (!splash) { if (typeof init === 'function') init(); return; }
+
+  const SPLASH_DURATION = 2000;
+
+  setTimeout(() => {
+    splash.classList.add('exit');
+    splash.addEventListener('animationend', () => {
+      splash.remove();
+    }, { once: true });
+    if (typeof init === 'function') init();
+  }, SPLASH_DURATION);
+})();
+// ──────────────────────────────────────────────────────
 </script>
 </body>
 </html>
