@@ -862,7 +862,7 @@ nav {
   font-size: 15px; font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: normal; overflow: visible; word-break: break-word;
 }
 .tl-ro {
   font-size: 13px;
@@ -1135,6 +1135,17 @@ nav {
   font-size: 14px; font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 2px;
+}
+a.testi-name-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: color .2s;
+}
+a.testi-name-link:hover {
+  color: var(--accent);
 }
 .testi-role { font-size: 12px; color: var(--text-tertiary); }
 .testi-rel { font-family: var(--font-mono); font-size: 10px; color: var(--accent); margin-top: 3px; letter-spacing: 0.04em; }
@@ -1901,7 +1912,7 @@ nav {
   .nav-hire-btn { display: none; }
   .photo-wrap, .photo-circle { width: 200px; height: 200px; }
   .proj-card-outer { grid-column: span 12 !important; }
-  .bento-stat { grid-column: span 12; }
+  .bento-stat { grid-column: span 6; }
   .bento-grid { gap: 10px; }
   .testi-grid { grid-template-columns: 1fr; }
   .exp-top { flex-direction: column; align-items: flex-start; }
@@ -2504,9 +2515,21 @@ function renderSkills(skills) {
 /* ═══════════════════════════════════════════════════
    TESTIMONIALS
 ═══════════════════════════════════════════════════ */
+const TESTI_LINKS = {
+  'Andrityo Hartoyo':       'https://www.linkedin.com/in/andrityo-hartoyo-848a81100/',
+  'Armando Parhusip':       'https://www.linkedin.com/in/armandoparhusip/',
+  'Arbiter Gerhard Sarumaha':'https://www.linkedin.com/in/arbiter-gerhard/',
+  'Andri Darmawan':         'https://www.linkedin.com/in/andri-darmawan/',
+  'Faisal Rachmadianto':    'https://www.linkedin.com/in/faisalrachmadianto/',
+};
+
 function renderTestimonials(ts) {
   document.getElementById('testi-grid').innerHTML = ts.map(t => {
-    const ini = t.name.split(' ').map(w => w[0]).slice(0,2).join('');
+    const ini  = t.name.split(' ').map(w => w[0]).slice(0,2).join('');
+    const link = TESTI_LINKS[t.name];
+    const nameEl = link
+      ? `<a class="testi-name testi-name-link" href="${link}" target="_blank" rel="noopener">${t.name} <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;opacity:.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
+      : `<div class="testi-name">${t.name}</div>`;
     return `
     <div class="testi-card">
       <div class="testi-qmark">"</div>
@@ -2514,7 +2537,7 @@ function renderTestimonials(ts) {
       <div class="testi-author">
         <div class="testi-av">${ini}</div>
         <div>
-          <div class="testi-name">${t.name}</div>
+          ${nameEl}
           <div class="testi-role">${t.title}</div>
           <div class="testi-rel">${t.relation} · ${t.date}</div>
         </div>
