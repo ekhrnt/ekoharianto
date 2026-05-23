@@ -1398,78 +1398,335 @@ nav {
 
 /* ─── PRINT ───────────────────────────────────────────────────────── */
 @media print {
-  /* Force light theme for printing */
-  :root {
-    --bg-base: #ffffff; --bg-surface: #ffffff; --bg-elevated: #f8f8f8;
-    --border: #e0e0e0; --border-active: #cccccc;
-    --text-primary: #0a0a0a; --text-secondary: #444444; --text-tertiary: #888888;
-    --accent: #c8441b; --accent2: #5b21b6;
+  @page { margin: 16mm 14mm; size: A4; }
+
+  /* ── 1. GLOBAL RESET ── */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
   }
 
-  /* Hide everything not needed for print */
-  nav, .chat-fab, #chat-panel, #cert-modal-bg,
-  #ls, #err, .scroll-hint, .mob-nav,
-  .hero-btns, .visitor-pill, .filter-bar,
-  .nav-print-btn, .nav-theme-btn, .nav-hire-btn, .hamburger,
-  .photo-ring, .tech-chips-row, .avail-badge { display: none !important; }
-
-  /* Reset page */
-  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  html, body { background: #fff !important; color: #0a0a0a !important; }
-  section { padding: 28px 0 !important; }
-  .container { width: 100% !important; padding: 0 32px !important; }
-
-  /* Hero — compact */
-  #hero {
-    min-height: unset !important;
-    padding: 32px 0 20px !important;
+  html {
+    font-size: 11px;
     background: #fff !important;
   }
-  .hero-grid { grid-template-columns: 1fr 160px !important; gap: 24px !important; }
-  .hero-name { font-size: 42px !important; }
-  .hero-subtitle { font-size: 16px !important; }
-  .hero-tagline { font-size: 13px !important; }
-  .photo-circle { width: 120px !important; height: 120px !important; border: 2px solid #ddd !important; }
-  .hero-stats { gap: 8px !important; }
-  .h-stat { padding: 8px !important; }
-  .h-stat-val { font-size: 18px !important; }
+  body {
+    font-family: 'Inter', Arial, sans-serif !important;
+    background: #fff !important;
+    color: #111 !important;
+    line-height: 1.5;
+    overflow: visible !important;
+  }
 
-  /* Bento → linear */
-  .bento-grid { display: block !important; }
-  .bento-card { margin-bottom: 16px !important; border: 1px solid #e0e0e0 !important; border-radius: 8px !important; padding: 16px !important; break-inside: avoid; }
+  /* ── 2. HIDE UI CHROME ── */
+  nav, .mob-nav, .hamburger,
+  .chat-fab, #chat-panel,
+  #cert-modal-bg, #ls, #err,
+  .scroll-hint, .photo-ring,
+  .hero-btns, .avail-badge,
+  .visitor-pill, .filter-bar,
+  #contact, #testimonials,
+  .tech-chips-row,
+  .section-eyebrow { display: none !important; }
 
-  /* Experience — expand all */
-  .tl-body { max-height: none !important; }
-  .tl-body-in { display: block !important; }
+  /* ── 3. RESET ALL BACKGROUNDS / COLORS ── */
+  section, div, article, aside, header, footer {
+    background: #fff !important;
+    border-color: #e0e0e0 !important;
+  }
+
+  /* ── 4. LAYOUT ── */
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  section { padding: 16px 0 !important; }
+
+  /* ── 5. HERO ── */
+  #hero {
+    min-height: unset !important;
+    padding: 0 0 12px !important;
+    background: #fff !important;
+    border-bottom: 2px solid #111 !important;
+    margin-bottom: 12px;
+  }
+  .hero-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 130px !important;
+    gap: 20px !important;
+    align-items: center !important;
+  }
+  .hero-name {
+    font-size: 32px !important;
+    letter-spacing: -0.02em !important;
+    color: #111 !important;
+    background: none !important;
+    -webkit-text-fill-color: #111 !important;
+    line-height: 1.1 !important;
+    margin-bottom: 4px !important;
+  }
+  /* Reset gradient text */
+  .hero-name span, .hero-name .grad {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #111 !important;
+    background-clip: unset !important;
+    color: #111 !important;
+  }
+  .hero-subtitle, #hero-title {
+    font-size: 14px !important;
+    color: #c8441b !important;
+    margin-bottom: 6px !important;
+    font-weight: 600 !important;
+    background: none !important;
+    -webkit-text-fill-color: #c8441b !important;
+  }
+  .hero-tagline, #hero-tagline {
+    font-size: 11px !important;
+    color: #555 !important;
+    line-height: 1.6 !important;
+    max-width: 100% !important;
+  }
+  /* Photo */
+  .hero-right { order: unset !important; }
+  .photo-wrap { width: 110px !important; height: 110px !important; }
+  .photo-circle {
+    width: 110px !important; height: 110px !important;
+    border: 2px solid #ccc !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: #eee !important;
+  }
+  /* Stats row under name */
+  .hero-stats {
+    display: flex !important;
+    gap: 16px !important;
+    margin-top: 8px !important;
+  }
+  .h-stat {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    text-align: center !important;
+    flex: 1 !important;
+  }
+  .h-stat-val {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #c8441b !important;
+    background: none !important;
+    -webkit-text-fill-color: #c8441b !important;
+    display: block !important;
+  }
+  .h-stat-lbl { font-size: 9px !important; color: #888 !important; }
+
+  /* ── 6. ABOUT / BENTO ── */
+  #about { padding: 12px 0 !important; }
+  .bento-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .bento-card {
+    background: #f9f9f9 !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 12px 14px !important;
+    break-inside: avoid !important;
+  }
+  .bento-bio { grid-column: span 2 !important; }
+  .bento-location, .bento-certs { grid-column: span 1 !important; }
+  .bento-stat { display: none !important; } /* stats already in hero */
+
+  #bio1, #bio2 {
+    font-size: 10.5px !important;
+    color: #333 !important;
+    line-height: 1.65 !important;
+    margin-bottom: 6px !important;
+  }
+  .bento-card h3, .bento-card .bento-label {
+    font-size: 9px !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: #888 !important;
+    margin-bottom: 8px !important;
+    font-weight: 700 !important;
+  }
+  /* Cert items */
+  .cert-item {
+    font-size: 10px !important;
+    color: #333 !important;
+    padding: 3px 0 !important;
+    border-bottom: 1px solid #eee !important;
+    cursor: default !important;
+  }
+  .cert-icon {
+    background: #f0ece8 !important;
+    color: #c8441b !important;
+    width: 16px !important; height: 16px !important;
+  }
+
+  /* ── 7. EXPERIENCE ── */
+  #experience {
+    padding: 12px 0 !important;
+    page-break-before: always;
+  }
+  .section-title {
+    font-size: 18px !important;
+    color: #111 !important;
+    margin-bottom: 14px !important;
+    border-bottom: 2px solid #c8441b !important;
+    padding-bottom: 6px !important;
+  }
+  /* Timeline */
+  .tl { padding-left: 14px !important; }
+  .tl::before { background: #c8441b !important; width: 1.5px !important; }
+  .tl-dot {
+    width: 10px !important; height: 10px !important;
+    left: -17px !important;
+    top: 14px !important;
+    border-color: #c8441b !important;
+    background: #fff !important;
+  }
+  .tl-dot.dim { border-color: #ccc !important; }
+  .tl-item { margin-bottom: 8px !important; }
+  .tl-card {
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 6px !important;
+    break-inside: avoid !important;
+  }
+  .tl-card.open, .tl-card { border-left: 3px solid #c8441b !important; }
+  .tl-row { padding: 10px 12px !important; gap: 10px !important; }
+  .tl-badge {
+    font-size: 8px !important;
+    padding: 2px 6px !important;
+    background: #f0ece8 !important;
+    color: #c8441b !important;
+    border: none !important;
+  }
+  .tl-badge.hosp { background: #ede9f5 !important; color: #5b21b6 !important; }
+  .tl-co { font-size: 12px !important; color: #111 !important; font-weight: 700 !important; }
+  .tl-ro { font-size: 10px !important; color: #555 !important; }
+  .tl-period { font-size: 9px !important; color: #888 !important; }
   .tl-chevron { display: none !important; }
-  .tl::before { background: #c8441b !important; }
-  .tl-card { border: 1px solid #e0e0e0 !important; break-inside: avoid; }
+  /* Force expand all */
+  .tl-body {
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .tl-body-in {
+    display: block !important;
+    padding: 8px 12px 10px !important;
+    border-top: 1px solid #eee !important;
+  }
+  .tl-bullets { margin-bottom: 8px !important; }
+  .tl-bullets li {
+    font-size: 10px !important;
+    color: #333 !important;
+    line-height: 1.55 !important;
+    padding-left: 12px !important;
+    margin-bottom: 2px !important;
+  }
+  .tl-bullets li::before { background: #c8441b !important; top: 7px !important; width: 4px !important; height: 4px !important; }
+  .tags { gap: 4px !important; }
+  .tag {
+    font-size: 8.5px !important;
+    padding: 2px 7px !important;
+    background: #f5f5f5 !important;
+    color: #555 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 100px !important;
+  }
 
-  /* Projects grid → 2 col */
-  .proj-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
-  .proj-card-outer, .proj-card-outer:first-child { grid-column: span 1 !important; background: #e0e0e0 !important; padding: 1px !important; }
-  .proj-card { padding: 16px !important; break-inside: avoid; }
-  .proj-num { font-size: 60px !important; }
+  /* ── 8. PROJECTS ── */
+  #projects {
+    padding: 12px 0 !important;
+    background: #fff !important;
+    page-break-before: always;
+  }
+  .proj-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .proj-card-outer,
+  .proj-card-outer:first-child {
+    grid-column: span 1 !important;
+    background: #e8e8e8 !important;
+    padding: 1px !important;
+    border-radius: 7px !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .proj-card {
+    background: #f9f9f9 !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+    break-inside: avoid !important;
+    height: 100% !important;
+  }
+  .proj-num {
+    font-size: 50px !important;
+    color: rgba(0,0,0,0.06) !important;
+    top: -12px !important;
+  }
+  .proj-title { font-size: 11px !important; color: #111 !important; font-weight: 700 !important; margin-bottom: 5px !important; }
+  .proj-desc { font-size: 9.5px !important; color: #444 !important; line-height: 1.55 !important; margin-bottom: 8px !important; }
+  .proj-techs { gap: 4px !important; }
+  .tech {
+    font-size: 8px !important;
+    padding: 2px 6px !important;
+    background: #f0ece8 !important;
+    color: #c8441b !important;
+    border: 1px solid rgba(200,68,27,0.2) !important;
+    border-radius: 100px !important;
+  }
 
-  /* Skills */
-  .skill-pills { gap: 6px !important; }
-  .spill { padding: 6px 12px !important; font-size: 12px !important; }
+  /* ── 9. SKILLS ── */
+  #skills { padding: 10px 0 !important; background: #fff !important; }
+  .skills-block { margin-bottom: 10px !important; }
+  .skills-block-title { font-size: 8px !important; color: #888 !important; margin-bottom: 8px !important; }
+  .skill-pills { gap: 5px !important; flex-wrap: wrap !important; }
+  .spill {
+    font-size: 10px !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    color: #333 !important;
+    -webkit-text-fill-color: #333 !important;
+  }
+  .spill.hi {
+    background: #f0ece8 !important;
+    border-color: #c8441b !important;
+    color: #c8441b !important;
+    -webkit-text-fill-color: #c8441b !important;
+  }
+  .dot { background: #c8441b !important; }
 
-  /* Testimonials */
-  .testi-grid { grid-template-columns: 1fr 1fr !important; }
-  .testi-card { break-inside: avoid; padding: 14px !important; }
+  /* ── 10. FADE / ANIMATION RESET ── */
+  .fade, .tl-item, .testi-card, .proj-card-outer, .bento-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 
-  /* Contact/Footer hidden */
-  #contact { display: none !important; }
-
-  /* Animation overrides */
-  .fade { opacity: 1 !important; transform: none !important; }
-  .reveal { opacity: 1 !important; transform: none !important; }
-
-  /* Page breaks */
-  #experience { page-break-before: always; }
-  #projects   { page-break-before: always; }
-  #skills     { page-break-before: auto; }
+  /* ── 11. GRADIENT TEXT RESET (global) ── */
+  [style*="background-clip"],
+  .grad-text, #nav-logo {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: #111 !important;
+    color: #111 !important;
+  }
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────────── */
