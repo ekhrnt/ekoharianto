@@ -1499,6 +1499,31 @@ a.testi-name-link:hover {
   z-index: 0;
 }
 
+#splash-sound-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: hintPulse 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.4s;
+}
+#splash-sound-hint.hidden { opacity: 0; }
+@keyframes hintPulse {
+  0%,100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+
 /* scan line */
 #splash::after {
   content: '';
@@ -2060,6 +2085,10 @@ a.testi-name-link:hover {
     <div class="splash-line"></div>
   </div>
   <div class="splash-progress"></div>
+  <div id="splash-sound-hint">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    tap for sound
+  </div>
 </div>
 
 <!-- Cert Modal -->
@@ -3024,11 +3053,24 @@ initCountUps();
     } catch(e) {}
   }
 
-  // Unlock on any gesture on the splash (tap/click = first gesture)
-  splash.addEventListener('pointerdown', unlockAudio, { passive: true });
-  splash.addEventListener('touchstart',  unlockAudio, { passive: true });
-  // Also catch keyboard / other interactions
-  document.addEventListener('keydown', unlockAudio, { once: true });
+  const hint = document.getElementById('splash-sound-hint');
+
+  function unlockAndHide() {
+    unlockAudio();
+    if (hint) hint.classList.add('hidden');
+    // Remove all listeners after first unlock
+    ['pointerdown','touchstart','click'].forEach(ev => {
+      splash.removeEventListener(ev, unlockAndHide);
+      document.removeEventListener(ev, unlockAndHide);
+    });
+  }
+
+  // Unlock on any tap/click anywhere (splash OR document)
+  ['pointerdown','touchstart','click'].forEach(ev => {
+    splash.addEventListener(ev, unlockAndHide, { passive: true });
+    document.addEventListener(ev, unlockAndHide, { once: true, passive: true });
+  });
+  document.addEventListener('keydown', unlockAndHide, { once: true });
 
   function playKeyClick() {
     if (!_audioReady || !_ctx || _ctx.state !== 'running') return;
