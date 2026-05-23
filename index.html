@@ -710,9 +710,6 @@ nav {
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
-@media (max-width: 768px) {
-  .bento-stats-wrap { grid-template-columns: 1fr 1fr !important; }
-}
 .bento-stat { grid-column: span 1; }
 .bento-stat-num {
   font-family: var(--font-display);
@@ -1098,7 +1095,7 @@ nav {
     gap: 8px !important;
   }
   .spill {
-    justify-content: center !important;
+    justify-content: flex-start !important;
     font-size: 12.5px !important;
     padding: 10px 12px !important;
   }
@@ -1224,7 +1221,21 @@ a.testi-name-link:hover {
   color: var(--text-secondary);
   margin-bottom: 40px;
 }
-.contact-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
+.contact-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: nowrap; margin-bottom: 64px; }
+@media (max-width: 768px) {
+  .contact-btns {
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+  .contact-btns .btn-li,
+  .contact-btns .btn-ghost,
+  .contact-btns .btn-wa {
+    flex: 1 !important;
+    padding: 10px 8px !important;
+    font-size: 11.5px !important;
+    justify-content: center !important;
+  }
+}
 .footer-line { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
 .footer-copy {
   font-family: var(--font-mono);
@@ -1960,14 +1971,9 @@ a.testi-name-link:hover {
   .nav-hire-btn { display: none; }
   .photo-wrap, .photo-circle { width: 200px; height: 200px; }
   .proj-card-outer { grid-column: span 12 !important; }
-  .bento-stat { grid-column: span 6; }
+  .bento-stat { grid-column: span 1; }
+  .bento-stats-wrap { grid-template-columns: 1fr 1fr !important; }
   .bento-grid { gap: 10px; }
-  .bento-stats-row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-    grid-column: span 12 !important;
-  }
   .testi-grid { grid-template-columns: 1fr; }
   .exp-top { flex-direction: column; align-items: flex-start; }
 }
