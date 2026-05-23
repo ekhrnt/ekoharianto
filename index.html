@@ -2448,6 +2448,7 @@ function renderProfile(p) {
   setS('sv1','sl1','in1','il1', p.m1_val, p.m1_label);
   setS('sv2','sl2','in2','il2', p.m2_val, p.m2_label);
   setS('sv3','sl3','in3','il3', p.m3_val, p.m3_label);
+  if (p.m4_val) setS(null,null,'in4','il4', p.m4_val, p.m4_label);
 
   if (p.linkedin) {
     document.getElementById('btn-li').href = p.linkedin;

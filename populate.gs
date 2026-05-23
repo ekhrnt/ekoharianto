@@ -40,6 +40,8 @@ function populateProfile() {
     ['m2_label',  'Users Managed'],
     ['m3_val',    '11'],
     ['m3_label',  'Projects Built'],
+    ['m4_val',    '4'],
+    ['m4_label',  'Certifications'],
   ];
 
   sheet.getRange(1, 1, data.length, 2).setValues(data);
