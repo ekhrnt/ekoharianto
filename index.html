@@ -1428,7 +1428,7 @@ nav {
   .scroll-hint, .photo-ring,
   .hero-btns, .avail-badge,
   .visitor-pill, .filter-bar,
-  #contact, #testimonials,
+  #contact,
   .tech-chips-row,
   .section-eyebrow { display: none !important; }
 
@@ -1726,6 +1726,58 @@ nav {
     background-clip: unset !important;
     -webkit-text-fill-color: #111 !important;
     color: #111 !important;
+  }
+
+  /* ── 12. TESTIMONIALS ── */
+  #testimonials {
+    padding: 12px 0 !important;
+    background: #fff !important;
+    page-break-before: always;
+  }
+  .testi-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .testi-card {
+    background: #f9f9f9 !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 14px !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+  .testi-quote {
+    font-size: 10px !important;
+    color: #333 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 10px !important;
+    font-style: italic !important;
+  }
+  .testi-quote::before { color: #c8441b !important; font-size: 16px !important; }
+  .testi-name { font-size: 11px !important; color: #111 !important; font-weight: 700 !important; }
+  .testi-role { font-size: 9px !important; color: #666 !important; }
+  .testi-rel { font-size: 8.5px !important; color: #999 !important; }
+  .testi-avatar {
+    width: 36px !important; height: 36px !important;
+    background: #f0ece8 !important;
+    color: #c8441b !important;
+    font-size: 14px !important;
+    border-radius: 50% !important;
+  }
+
+  /* ── 13. PRINT FOOTER ── */
+  body::after {
+    content: "Printed from about.ekoharianto-mr.workers.dev";
+    display: block !important;
+    text-align: center !important;
+    font-size: 8.5px !important;
+    color: #aaa !important;
+    margin-top: 20px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid #eee !important;
+    font-family: 'Inter', Arial, sans-serif !important;
+    letter-spacing: 0.04em !important;
   }
 }
 
