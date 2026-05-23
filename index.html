@@ -1462,16 +1462,24 @@ a.testi-name-link:hover {
   transform: translateY(60px);
   animation: letterRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-.splash-k { animation-delay: 0.05s; }
-.splash-o { animation-delay: 0.13s; }
-.splash-r { animation-delay: 0.21s; }
+.splash-k { animation: letterRise 0.5s 0.05s cubic-bezier(0.22,1,0.36,1) forwards, letterPulse 0.8s 0.95s ease-in-out infinite; }
+.splash-o { animation: letterRise 0.5s 0.13s cubic-bezier(0.22,1,0.36,1) forwards, letterPulse 0.8s 1.15s ease-in-out infinite; }
+.splash-r { animation: letterRise 0.5s 0.21s cubic-bezier(0.22,1,0.36,1) forwards, letterPulse 0.8s 1.35s ease-in-out infinite; }
 .splash-i {
-  animation-delay: 0.29s;
   color: #FF6B35;
   text-shadow: 0 0 40px rgba(255,107,53,0.5);
+  animation: letterRise 0.5s 0.29s cubic-bezier(0.22,1,0.36,1) forwards, letterPulseAccent 0.8s 1.55s ease-in-out infinite;
 }
 @keyframes letterRise {
   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes letterPulse {
+  0%, 100% { color: #f0f0f0; text-shadow: none; }
+  50%       { color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.35); }
+}
+@keyframes letterPulseAccent {
+  0%, 100% { color: #FF6B35; text-shadow: 0 0 40px rgba(255,107,53,0.5); }
+  50%       { color: #ff8c5a; text-shadow: 0 0 60px rgba(255,107,53,0.8); }
 }
 .splash-line {
   width: 0%;
@@ -1982,7 +1990,7 @@ a.testi-name-link:hover {
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo-link">
-    <span id="nav-logo">EK.</span>
+    <span id="nav-logo">Kori<em style="font-style:normal;background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">.</em></span>
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -2362,8 +2370,8 @@ function renderAll(d) {
 function renderProfile(p) {
   document.title = `${p.name} — ${p.title}`;
 
-  const l = (p.nickname || p.name || 'K')[0].toUpperCase();
-  document.getElementById('nav-logo').innerHTML = `${l}<em style="font-style:normal;background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">.</em>`;
+  const nick = p.nickname || 'Kori';
+  document.getElementById('nav-logo').innerHTML = `${nick}<em style="font-style:normal;background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">.</em>`;
 
   document.getElementById('hero-name').innerHTML = `<span class="hero-name-first">${(p.name||'Eko Harianto').split(' ')[0]}</span><span class="hero-name-last">${(p.name||'Eko Harianto').split(' ').slice(1).join(' ')}</span>`;
   document.getElementById('hero-title').innerHTML = `${p.title || 'AVP, Head of IT'}<span class="tw-cursor"></span>`;
