@@ -1501,27 +1501,28 @@ a.testi-name-link:hover {
 
 #splash-sound-hint {
   position: absolute;
-  bottom: 32px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 11px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.3);
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  animation: hintPulse 1.8s ease-in-out infinite;
+  animation: hintPulse 1.4s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s ease;
+  white-space: nowrap;
 }
-#splash-sound-hint.hidden { opacity: 0; }
+#splash-sound-hint.hidden { opacity: 0 !important; animation: none; }
 @keyframes hintPulse {
-  0%,100% { opacity: 0.3; }
-  50%      { opacity: 0.7; }
+  0%,100% { opacity: 0.35; }
+  50%      { opacity: 0.75; }
 }
 
 /* scan line */
@@ -2082,7 +2083,6 @@ a.testi-name-link:hover {
     <div class="splash-text-wrap">
       <span id="splash-typed"></span><span id="splash-cursor"></span>
     </div>
-    <div class="splash-line"></div>
   </div>
   <div class="splash-progress"></div>
   <div id="splash-sound-hint">
@@ -3139,7 +3139,7 @@ initCountUps();
       playKeyClick();
       i++;
       typeNext();
-    }, i === 0 ? 500 : CHAR_DUR + (EXTRA[i % EXTRA.length] || 0));
+    }, i === 0 ? 1000 : CHAR_DUR + (EXTRA[i % EXTRA.length] || 0));
   }
 
   typeNext();
