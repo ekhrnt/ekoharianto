@@ -143,6 +143,11 @@ nav {
   transition: color .2s, background .2s;
 }
 .nav-links a:hover { color: var(--text-primary); background: var(--border); }
+.nav-links a.active {
+  color: var(--accent);
+  background: var(--accent-glow);
+  font-weight: 600;
+}
 
 .nav-right {
   display: flex;
@@ -3021,6 +3026,33 @@ initCountUps();
   window.addEventListener('scroll', () => {
     btn.classList.toggle('visible', window.scrollY > 400);
   }, { passive: true });
+})();
+
+// ── SCROLL SPY — active nav link ──────────────────────
+(function() {
+  const SECTIONS = ['about','projects','experience','skills','testimonials','contact'];
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  function getActive() {
+    const scrollY = window.scrollY + 100; // offset for nav height
+    // Walk sections bottom-up: first one whose top <= scrollY wins
+    for (let i = SECTIONS.length - 1; i >= 0; i--) {
+      const el = document.getElementById(SECTIONS[i]);
+      if (el && el.offsetTop <= scrollY) return SECTIONS[i];
+    }
+    return null;
+  }
+
+  function updateNav() {
+    const active = getActive();
+    navLinks.forEach(a => {
+      const href = a.getAttribute('href').replace('#','');
+      a.classList.toggle('active', href === active);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav(); // run once on load
 })();
 
 // ── SPLASH CONTROLLER ─────────────────────────────────
