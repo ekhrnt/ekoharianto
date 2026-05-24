@@ -42,6 +42,7 @@ function populateProfile() {
     ['m3_label',  'Projects Built'],
     ['m4_val',    '4'],
     ['m4_label',  'Certifications'],
+    ['contact_sub', 'Open to IT leadership, GRC, cybersecurity, and AI/automation roles. Passionate about building intelligent systems that solve real problems — not just writing policies.'],
   ];
 
   sheet.getRange(1, 1, data.length, 2).setValues(data);
