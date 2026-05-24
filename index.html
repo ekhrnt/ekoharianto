@@ -1092,15 +1092,15 @@ nav {
 }
 .proj-num {
   position: absolute;
-  right: 16px; top: 50%;
-  transform: translateY(-50%);
+  right: 18px; bottom: 14px;
   font-family: var(--font-display);
-  font-size: 36px; font-weight: 800;
+  font-size: 80px; font-weight: 800;
   color: var(--proj-cat-color, var(--accent));
-  opacity: 0.12;
+  opacity: 0.07;
   line-height: 1;
   user-select: none; pointer-events: none;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
+  z-index: 0;
 }
 
 /* ── Card body ── */
@@ -2845,11 +2845,11 @@ function renderProjects(projects) {
           <span class="proj-cat-icon">${cat.icon}</span>
           <span class="proj-cat-label">${cat.label}</span>
           ${p.year ? `<span class="proj-year">${p.year}</span>` : ''}
-          <span class="proj-num">${String(p.number).padStart(2,'0')}</span>
         </div>
 
         <!-- Body -->
         <div class="proj-card-body">
+          <span class="proj-num">${String(p.number).padStart(2,'0')}</span>
           <div class="proj-title">${p.title}</div>
 
           <ul class="proj-bullets">
