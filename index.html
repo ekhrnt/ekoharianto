@@ -2264,24 +2264,42 @@ a.testi-name-link:hover {
    VISITOR COUNTER
 ═══════════════════════════════════════════════════ */
 async function trackVisit() {
-  try {
-    // countapi.xyz — free, no auth, persists across sessions
-    const res  = await fetch('https://api.countapi.xyz/hit/ekoharianto-porto/pageviews');
-    const data = await res.json();
-    const count = data.value || 0;
+  const APIS = [
+    // Primary: counterapi.dev (maintained countapi alternative)
+    async () => {
+      const r = await fetch('https://api.counterapi.dev/v1/ekoharianto-porto/pageviews/up');
+      const d = await r.json();
+      return d.count;
+    },
+    // Fallback: hits.sh (image-based but has JSON endpoint)
+    async () => {
+      const r = await fetch('https://hits.sh/about.ekoharianto-mr.workers.dev.json');
+      const d = await r.json();
+      return d.total;
+    },
+  ];
 
-    const formatted = formatCount(count);
-    ['visitor-num', 'visitor-num-nav'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.remove('updated');
-      void el.offsetWidth;
-      el.textContent = formatted;
-      el.classList.add('updated');
-    });
-  } catch(e) {
-    document.getElementById('visitor-pill').style.display = 'none';
+  for (const api of APIS) {
+    try {
+      const count = await api();
+      if (!count && count !== 0) continue;
+      const formatted = formatCount(count);
+      ['visitor-num', 'visitor-num-nav'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('updated');
+        void el.offsetWidth;
+        el.textContent = formatted;
+        el.classList.add('updated');
+      });
+      return; // success — stop
+    } catch(e) { /* try next */ }
   }
+  // All APIs failed — hide the pill
+  ['visitor-pill','visitor-pill-nav'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function formatCount(n) {
