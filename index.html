@@ -1055,9 +1055,17 @@ nav {
   border-radius: 0;
 }
 .proj-cat-icon {
-  font-size: 15px;
-  line-height: 1;
+  width: 16px; height: 16px;
   flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.proj-cat-icon svg {
+  width: 16px; height: 16px;
+  stroke: var(--proj-cat-color, var(--accent));
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .proj-cat-label {
   font-family: var(--font-mono);
@@ -2009,7 +2017,8 @@ a.testi-name-link:hover {
   .proj-cat-bar { padding: 7px 12px !important; background: #f5f5f5 !important; border-bottom: 1px solid #e0e0e0 !important; }
   .proj-cat-bar::before { display: none !important; }
   .proj-cat-label { font-size: 8px !important; color: #555 !important; }
-  .proj-cat-icon { font-size: 12px !important; }
+  .proj-cat-icon { width: 12px !important; height: 12px !important; }
+  .proj-cat-icon svg { width: 12px !important; height: 12px !important; stroke: #555 !important; }
   .proj-title { font-size: 11px !important; color: #111 !important; font-weight: 700 !important; margin-bottom: 8px !important; }
   .proj-year { font-size: 8px !important; border: 1px solid #ccc !important; color: #555 !important; }
   .proj-bullets { gap: 4px !important; margin-bottom: 8px !important; }
@@ -2779,23 +2788,34 @@ function filterExp(type, btn) {
    PROJECTS
 ═══════════════════════════════════════════════════ */
 /* ── Project category detector ── */
+const PROJ_CAT_ICONS = {
+  ai:      `<svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/><circle cx="9" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="11" r="1" fill="currentColor" stroke="none"/><path d="M9 15s1 1 3 1 3-1 3-1"/></svg>`,
+  grc:     `<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+  auto:    `<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  infra:   `<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+  product: `<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="19" y1="12" x2="5" y2="12" stroke="none"/><path d="M14 6l-4 6 4 6"/></svg>`,
+  integ:   `<svg viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>`,
+  dev:     `<svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  ops:     `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>`,
+};
+
 function getProjCat(tech, title) {
   const t = (tech + ' ' + title).toLowerCase();
   if (t.includes('ai') || t.includes('llm') || t.includes('gpt') || t.includes('openclaw') || t.includes('quantum') || t.includes('underwriting') || t.includes('claims'))
-    return { label:'AI & Automation', icon:'🤖', color:'#7C3AED', bg:'rgba(124,58,237,0.1)' };
+    return { label:'AI & Automation', icon: PROJ_CAT_ICONS.ai,      color:'#7C3AED', bg:'rgba(124,58,237,0.1)' };
   if (t.includes('iso') || t.includes('grc') || t.includes('audit') || t.includes('policy') || t.includes('dpo') || t.includes('ojk') || t.includes('compliance') || t.includes('uu pdp'))
-    return { label:'Governance & GRC', icon:'🛡️', color:'#22c55e', bg:'rgba(34,197,94,0.1)' };
-  if (t.includes('google apps script') || t.includes('gas') || t.includes('notification') || t.includes('whatsapp') || t.includes('email auto') || t.includes('ticketing') || t.includes('automation'))
-    return { label:'Automation', icon:'⚡', color:'#FF6B35', bg:'rgba(255,107,53,0.1)' };
+    return { label:'Governance & GRC', icon: PROJ_CAT_ICONS.grc,     color:'#22c55e', bg:'rgba(34,197,94,0.1)' };
+  if (t.includes('google apps script') || t.includes('gas') || t.includes('notification') || t.includes('whatsapp') || t.includes('email auto') || t.includes('ticketing') || t.includes('automation') || t.includes('fonnte'))
+    return { label:'Automation',        icon: PROJ_CAT_ICONS.auto,    color:'#FF6B35', bg:'rgba(255,107,53,0.1)' };
   if (t.includes('infrastructure') || t.includes('linux') || t.includes('proxmox') || t.includes('active directory') || t.includes('itsm') || t.includes('network') || t.includes('pms') || t.includes('freenas'))
-    return { label:'IT Infrastructure', icon:'🏗️', color:'#3B82F6', bg:'rgba(59,130,246,0.1)' };
+    return { label:'IT Infrastructure', icon: PROJ_CAT_ICONS.infra,   color:'#3B82F6', bg:'rgba(59,130,246,0.1)' };
   if (t.includes('e-commerce') || t.includes('xendit') || t.includes('github pages') || t.includes('serabut') || t.includes('payment'))
-    return { label:'Product & Dev', icon:'🛒', color:'#EC4899', bg:'rgba(236,72,153,0.1)' };
+    return { label:'Product & Dev',     icon: PROJ_CAT_ICONS.product, color:'#EC4899', bg:'rgba(236,72,153,0.1)' };
   if (t.includes('api integration') || t.includes('dukcapil') || t.includes('telecoms') || t.includes('migration') || t.includes('change management'))
-    return { label:'Integration & Ops', icon:'🔗', color:'#F59E0B', bg:'rgba(245,158,11,0.1)' };
+    return { label:'Integration & Ops', icon: PROJ_CAT_ICONS.integ,   color:'#F59E0B', bg:'rgba(245,158,11,0.1)' };
   if (t.includes('telegram') || t.includes('python') || t.includes('monitoring') || t.includes('bot'))
-    return { label:'Dev & Scripting', icon:'💻', color:'#06B6D4', bg:'rgba(6,182,212,0.1)' };
-  return { label:'IT Operations', icon:'🔧', color:'#64748B', bg:'rgba(100,116,139,0.1)' };
+    return { label:'Dev & Scripting',   icon: PROJ_CAT_ICONS.dev,     color:'#06B6D4', bg:'rgba(6,182,212,0.1)' };
+  return   { label:'IT Operations',    icon: PROJ_CAT_ICONS.ops,     color:'#64748B', bg:'rgba(100,116,139,0.1)' };
 }
 
 /* ── Split description into scannable bullet points ── */
