@@ -1967,7 +1967,7 @@ a.testi-name-link:hover {
         <div class="cert-spinner"></div>
         <span>Loading certificate…</span>
       </div>
-      <iframe class="cert-modal-iframe" id="cert-modal-iframe" onload="certIframeLoaded()"></iframe>
+      <iframe class="cert-modal-iframe" id="cert-modal-iframe" onload="if(typeof certIframeLoaded==='function')certIframeLoaded()"></iframe>
     </div>
   </div>
 </div>
@@ -2796,7 +2796,7 @@ ${skills}
 === EXTRA CONTEXT ===
 ${PD?.agentContext||''}`;
 
-    const res = await fetch('/api/chat', {
+    const res = await fetch('https://kori-chat.ekoharianto-mr.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
