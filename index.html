@@ -2775,7 +2775,9 @@ Your job: answer questions about Kori in a warm, conversational way — like a k
 - Answer in the same language the user uses (Indonesian or English)
 - Be specific with numbers, company names, and real achievements
 - Keep answers concise but informative — no walls of text
-- For hiring/collaboration: direct to ${p.email||'ekoharianto.mr@gmail.com'} or LinkedIn
+- Use plain text only — NO markdown symbols like **, *, #, or bullet dashes. Use natural sentences instead.
+- If you don't know the answer or need more detail: say "Untuk info lebih lanjut, bisa langsung chat Kori via WhatsApp: https://wa.me/${(p.whatsapp||'6281234567890').replace(/\D/g,'')}" (in Indonesian) or the English equivalent
+- For hiring/collaboration: direct to WhatsApp https://wa.me/${(p.whatsapp||'6281234567890').replace(/\D/g,'')}
 
 === ABOUT KORI ===
 ${p.bio1||''} ${p.bio2||''}
@@ -2805,7 +2807,7 @@ ${PD?.agentContext||''}`;
     const d = await res.json();
     const reply = d.choices?.[0]?.message?.content || 'Something went wrong, try again.';
     bubble.innerHTML = '';
-    bubble.textContent = reply;
+    bubble.innerHTML = renderChat(reply);
     CH.push({ role:'assistant', content:reply });
   } catch(e) {
     bubble.innerHTML = '';
@@ -2813,6 +2815,22 @@ ${PD?.agentContext||''}`;
   }
   const msgs = document.getElementById('chat-msgs');
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+function renderChat(text) {
+  // Escape HTML first
+  let s = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Bold **text** or __text__
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/__(.+?)__/g, '<strong>$1</strong>');
+  // Italic *text* or _text_
+  s = s.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+  s = s.replace(/_([^_\n]+?)_/g, '<em>$1</em>');
+  // Clickable URLs
+  s = s.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--accent);word-break:break-all;">$1</a>');
+  // Newlines → <br>
+  s = s.replace(/\n/g, '<br>');
+  return s;
 }
 
 function addMsg(text, role) {
