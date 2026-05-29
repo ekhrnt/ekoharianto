@@ -2039,9 +2039,10 @@ a.testi-name-link:hover {
           <div class="photo-ring"></div>
           <div class="photo-circle">
             <div class="photo-fallback" id="ph-fallback">EH</div>
-            <img id="ph-img" src="" alt="Eko Harianto" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;"
-              onload="this.style.display='block';document.getElementById('ph-fallback').style.display='none';"
-              onerror="this.style.display='none';">
+            <img id="ph-img" src="" alt="Eko Harianto" fetchpriority="high" decoding="async"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0;transition:opacity .4s ease;"
+              onload="this.style.opacity='1';document.getElementById('ph-fallback').style.opacity='0';"
+              onerror="this.remove();">
           </div>
         </div>
         <div class="hero-stats">
@@ -2405,16 +2406,20 @@ function renderProfile(p) {
     });
   }
 
-  // photo — try thumbnail CDN first, fallback to lh3
+  // photo — lh3 CDN is fastest (direct, no redirect); thumbnail as fallback
   if (p.photo) {
     const match = p.photo.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (match) {
       const fileId = match[1];
       const img = document.getElementById('ph-img');
-      const primary   = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
-      const secondary = `https://lh3.googleusercontent.com/d/${fileId}=w400`;
+      const primary   = `https://lh3.googleusercontent.com/d/${fileId}=w600`;
+      const secondary = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
       img.onerror = () => { img.onerror = null; img.src = secondary; };
       img.src = primary;
+      // Also inject a <link rel="preload"> so browser fetches immediately
+      const preload = document.createElement('link');
+      preload.rel = 'preload'; preload.as = 'image'; preload.href = primary;
+      document.head.appendChild(preload);
     }
   }
 
@@ -2900,7 +2905,7 @@ function populateCVPrint(d) {
   let photoSrc = '';
   if (p.photo) {
     const m = p.photo.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (m) photoSrc = `https://drive.google.com/thumbnail?id=${m[1]}&sz=w160`;
+    if (m) photoSrc = `https://lh3.googleusercontent.com/d/${m[1]}=w160`;
   }
 
   // WhatsApp display
