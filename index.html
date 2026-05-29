@@ -1465,6 +1465,30 @@ a.testi-name-link:hover {
   border-bottom-right-radius: 3px;
 }
 
+/* ── Typing indicator ── */
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 4px;
+  height: 20px;
+}
+.typing-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: block;
+  animation: typing-wave 1.2s ease-in-out infinite;
+  opacity: 0.6;
+}
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.18s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes typing-wave {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
 .chat-inp-row {
   padding: 12px;
   border-top: 1px solid var(--border);
@@ -2737,7 +2761,7 @@ async function sendMsg() {
   inp.value = '';
   addMsg(text, 'user');
   CH.push({ role: 'user', content: text });
-  const bubble = addMsg('…', 'ai');
+  const bubble = addTyping();
 
   try {
     const p = PD?.profile || {};
@@ -2780,9 +2804,11 @@ ${PD?.agentContext||''}`;
     });
     const d = await res.json();
     const reply = d.choices?.[0]?.message?.content || 'Something went wrong, try again.';
+    bubble.innerHTML = '';
     bubble.textContent = reply;
     CH.push({ role:'assistant', content:reply });
   } catch(e) {
+    bubble.innerHTML = '';
     bubble.textContent = 'Oops, something went wrong. Try again!';
   }
   const msgs = document.getElementById('chat-msgs');
@@ -2796,6 +2822,19 @@ function addMsg(text, role) {
   const b = document.createElement('div');
   b.className = `cbubble ${role}`;
   b.textContent = text;
+  w.appendChild(b);
+  msgs.appendChild(w);
+  msgs.scrollTop = msgs.scrollHeight;
+  return b;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const w = document.createElement('div');
+  w.className = 'cmsg ai';
+  const b = document.createElement('div');
+  b.className = 'cbubble ai';
+  b.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
   w.appendChild(b);
   msgs.appendChild(w);
   msgs.scrollTop = msgs.scrollHeight;
