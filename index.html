@@ -97,16 +97,20 @@ nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
   background: rgba(8,8,8,0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   z-index: 1000;
   transition: background .3s;
+}
+.nav-inner {
+  width: min(1040px, 100% - 48px);
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .nav-center {
   display: flex;
@@ -1944,6 +1948,7 @@ a.testi-name-link:hover {
 
 <!-- NAV -->
 <nav>
+<div class="nav-inner">
   <div class="nav-center">
     <a href="#" class="nav-logo-link">
       <span id="nav-logo">Kori<em style="font-style:normal;background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">.</em></span>
@@ -1975,6 +1980,7 @@ a.testi-name-link:hover {
       <span></span><span></span><span></span>
     </button>
   </div>
+</div>
 </nav>
 
 <div class="mob-nav" id="mob-nav">
