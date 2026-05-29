@@ -208,18 +208,45 @@ nav {
 }
 .visitor-num.updated { animation: roll-in .4s ease forwards; }
 
-.nav-theme-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
+/* ── Theme toggle switch ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   cursor: pointer;
-  font-size: 15px;
-  transition: all .2s;
-  color: var(--text-secondary);
+  user-select: none;
 }
-.nav-theme-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+.theme-toggle-icon {
+  font-size: 13px;
+  line-height: 1;
+  transition: opacity .25s;
+}
+.theme-toggle-track {
+  position: relative;
+  width: 40px; height: 22px;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-active);
+  border-radius: 100px;
+  transition: background .3s, border-color .3s;
+  flex-shrink: 0;
+}
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--gradient-hero);
+  transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(18px);
+}
+[data-theme="light"] .theme-toggle-track {
+  background: #e0e0e0;
+  border-color: rgba(0,0,0,0.15);
+}
+.theme-toggle:hover .theme-toggle-track { border-color: var(--accent); }
 
 .nav-hire-btn {
   font-family: var(--font-display);
@@ -1893,6 +1920,14 @@ a.testi-name-link:hover {
   nav { padding: 0 20px; }
 }
 </style>
+<!-- Apply theme before first paint to prevent flash -->
+<script>
+(function(){
+  var s=localStorage.getItem('theme');
+  if(s){document.documentElement.dataset.theme=s;}
+  else{var h=new Date().getHours();document.documentElement.dataset.theme=(h>=6&&h<18)?'light':'dark';}
+})();
+</script>
 </head>
 <body>
 
@@ -1970,7 +2005,11 @@ a.testi-name-link:hover {
       <span class="visitor-num" id="visitor-num-nav">—</span>
       <span class="visitor-label">views</span>
     </div>
-    <button class="nav-theme-btn" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="Toggle theme">🌙</button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn" aria-label="Toggle theme" style="background:none;border:none;padding:0;">
+      <span class="theme-toggle-icon">☀️</span>
+      <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+      <span class="theme-toggle-icon">🌙</span>
+    </button>
     <button class="nav-print-btn" onclick="window.print()" aria-label="Print resume" title="Print / Save as PDF">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print
@@ -2809,23 +2848,19 @@ function toggleTheme() {
 }
 
 function updateThemeIcon() {
-  const btn = document.getElementById('theme-toggle-btn');
-  if (!btn) return;
-  btn.textContent = document.documentElement.dataset.theme === 'light' ? '🌙' : '☀️';
+  // CSS handles toggle thumb position via [data-theme] — nothing to do here
 }
 
 // Init theme — auto by time if no manual override saved
 (function() {
   const saved = localStorage.getItem('theme');
   if (saved) {
-    // User manually set it — respect their choice
     document.documentElement.dataset.theme = saved;
   } else {
-    // Auto: 06:00–18:00 → light, 18:00–06:00 → dark
+    // Auto: 06:00–18:00 → light, else dark
     const h = new Date().getHours();
     document.documentElement.dataset.theme = (h >= 6 && h < 18) ? 'light' : 'dark';
   }
-  updateThemeIcon();
 })();
 
 /* ═══════════════════════════════════════════════════
