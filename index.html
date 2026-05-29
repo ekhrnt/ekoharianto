@@ -2255,36 +2255,51 @@ a.testi-name-link:hover {
    VISITOR COUNTER
 ═══════════════════════════════════════════════════ */
 async function trackVisit() {
-  const APIS = [
-    // Primary: counterapi.dev (maintained countapi alternative)
-    async () => {
+  // Only increment once per browser session (not on every refresh)
+  const alreadyCounted = sessionStorage.getItem('kori_visited');
+
+  try {
+    let count;
+    if (alreadyCounted) {
+      // Just read the current count — no increment
+      const r = await fetch('https://api.counterapi.dev/v1/ekoharianto-porto/pageviews');
+      const d = await r.json();
+      count = d.count;
+    } else {
+      // First visit this session — increment
       const r = await fetch('https://api.counterapi.dev/v1/ekoharianto-porto/pageviews/up');
       const d = await r.json();
-      return d.count;
-    },
-    // Fallback: hits.sh (image-based but has JSON endpoint)
-    async () => {
+      count = d.count;
+      sessionStorage.setItem('kori_visited', '1');
+    }
+    if (!count && count !== 0) throw new Error('no count');
+    const navEl = document.getElementById('visitor-num-nav');
+    if (navEl) {
+      navEl.classList.remove('updated');
+      void navEl.offsetWidth;
+      navEl.textContent = formatCount(count);
+      navEl.classList.add('updated');
+    }
+    return;
+  } catch(e) { /* try fallback */ }
+
+  // Fallback: hits.sh (always increments, no GET-only option)
+  try {
+    if (!alreadyCounted) {
       const r = await fetch('https://hits.sh/about.ekoharianto-mr.workers.dev.json');
       const d = await r.json();
-      return d.total;
-    },
-  ];
-
-  for (const api of APIS) {
-    try {
-      const count = await api();
-      if (!count && count !== 0) continue;
-      const formatted = formatCount(count);
+      sessionStorage.setItem('kori_visited', '1');
       const navEl = document.getElementById('visitor-num-nav');
       if (navEl) {
         navEl.classList.remove('updated');
         void navEl.offsetWidth;
-        navEl.textContent = formatted;
+        navEl.textContent = formatCount(d.total);
         navEl.classList.add('updated');
       }
-      return; // success — stop
-    } catch(e) { /* try next */ }
-  }
+      return;
+    }
+  } catch(e) { /* ignore */ }
+
   // All APIs failed — hide the pill
   const pill = document.getElementById('visitor-pill-nav');
   if (pill) pill.style.display = 'none';
