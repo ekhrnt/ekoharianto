@@ -2377,7 +2377,7 @@ function formatCount(n) {
    CONFIG
 ═══════════════════════════════════════════════════ */
 const GAS_URL    = 'https://script.google.com/macros/s/AKfycbxwIkfOVb59aRAci1QsVMCRlQvGTNbIv94yzEjK9MPicLzU8ee-mXZkGp1b19oDdDc/exec';
-const CLAUDE_KEY = 'PASTE_YOUR_ANTHROPIC_API_KEY_HERE';
+const CLAUDE_KEY = ''; // Key stored securely in Cloudflare env — calls go via /api/chat proxy
 // Photo URL is read dynamically from Google Sheets (profile row: photo)
 
 let PD = null;   // portfolio data
@@ -2763,27 +2763,50 @@ async function sendMsg() {
   const bubble = addMsg('…', 'ai');
 
   try {
-    if (CLAUDE_KEY === 'PASTE_YOUR_ANTHROPIC_API_KEY_HERE') throw new Error('no-key');
-    const p  = PD?.profile || {};
-    const sys = `You are an AI assistant for ${p.name||'Eko Harianto'} (${p.nickname||'Kori'}), ${p.title||'AVP, Head of IT'}. Be concise and professional.\nContext: ${PD?.agentContext||''}\n${p.bio1||''} ${p.bio2||''}`;
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const p = PD?.profile || {};
+    const exp = (PD?.experience||[]).map(e=>`${e.company} — ${e.role} (${e.period}): ${e.description}`).join('\n');
+    const projs = (PD?.projects||[]).map(j=>`${j.title}: ${j.description} [${j.tech}]`).join('\n');
+    const skills = (PD?.skills||[]).map(s=>s.skill).join(', ');
+    const sys = `You are a natural, friendly AI assistant representing Eko Harianto (known as Kori), ${p.title||'Head of IT'} based in ${p.location||'Jakarta, Indonesia'}.
+
+Your job: answer questions about Kori in a warm, conversational way — like a knowledgeable colleague, not a robot.
+- Never mention "Google Sheets", "data source", or any technical backend
+- Answer in the same language the user uses (Indonesian or English)
+- Be specific with numbers, company names, and real achievements
+- Keep answers concise but informative — no walls of text
+- For hiring/collaboration: direct to ${p.email||'ekoharianto.mr@gmail.com'} or LinkedIn
+
+=== ABOUT KORI ===
+${p.bio1||''} ${p.bio2||''}
+Available for opportunities: ${p.available==='true'?'Yes':'Currently employed'}
+
+=== EXPERIENCE ===
+${exp}
+
+=== PROJECTS ===
+${projs}
+
+=== SKILLS ===
+${skills}
+
+=== EXTRA CONTEXT ===
+${PD?.agentContext||''}`;
+
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-browser': 'true',
-      },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:600, system:sys, messages:CH })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-v3.2',
+        max_tokens: 600,
+        messages: [{ role:'system', content:sys }, ...CH]
+      })
     });
     const d = await res.json();
-    const reply = d.content?.[0]?.text || 'Sorry, something went wrong.';
+    const reply = d.choices?.[0]?.message?.content || 'Something went wrong, try again.';
     bubble.textContent = reply;
     CH.push({ role:'assistant', content:reply });
   } catch(e) {
-    bubble.textContent = e.message === 'no-key'
-      ? 'AI chat coming soon! 🚀 Reach out via LinkedIn or email for now.'
-      : 'Oops, something went wrong.';
+    bubble.textContent = 'Oops, something went wrong. Try again!';
   }
   const msgs = document.getElementById('chat-msgs');
   msgs.scrollTop = msgs.scrollHeight;
