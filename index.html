@@ -2099,16 +2099,16 @@ a.testi-name-link:hover {
         </div>
         <div class="hero-stats">
           <div class="h-stat">
-            <div class="h-stat-val" id="sv1">10+</div>
-            <div class="h-stat-lbl" id="sl1">Years Exp.</div>
+            <div class="h-stat-val" id="sv1">—</div>
+            <div class="h-stat-lbl" id="sl1">loading</div>
           </div>
           <div class="h-stat">
-            <div class="h-stat-val" id="sv2">4</div>
-            <div class="h-stat-lbl" id="sl2">Certifications</div>
+            <div class="h-stat-val" id="sv2">—</div>
+            <div class="h-stat-lbl" id="sl2">loading</div>
           </div>
           <div class="h-stat">
-            <div class="h-stat-val" id="sv3">10</div>
-            <div class="h-stat-lbl" id="sl3">Companies</div>
+            <div class="h-stat-val" id="sv3">—</div>
+            <div class="h-stat-lbl" id="sl3">loading</div>
           </div>
         </div>
         <div class="hero-tech-chips">
@@ -2434,9 +2434,13 @@ function renderProfile(p) {
   }
 
   // Hero stats (static, from sheets)
-  if (p.m1_val) { document.getElementById('sv1').textContent = p.m1_val; document.getElementById('sl1').textContent = p.m1_label; }
-  if (p.m2_val) { document.getElementById('sv2').textContent = p.m2_val; document.getElementById('sl2').textContent = p.m2_label; }
-  if (p.m3_val) { document.getElementById('sv3').textContent = p.m3_val; document.getElementById('sl3').textContent = p.m3_label; }
+  // Hero stats — always from Sheets, no hardcode
+  document.getElementById('sv1').textContent = p.m1_val   || '—';
+  document.getElementById('sl1').textContent = p.m1_label || '—';
+  document.getElementById('sv2').textContent = p.m2_val   || '—';
+  document.getElementById('sl2').textContent = p.m2_label || '—';
+  document.getElementById('sv3').textContent = p.m3_val   || '—';
+  document.getElementById('sl3').textContent = p.m3_label || '—';
 
   // Bento stats — cycling pool (all 4 cards rotate through these values)
   const statPool = [
