@@ -2039,10 +2039,9 @@ a.testi-name-link:hover {
           <div class="photo-ring"></div>
           <div class="photo-circle">
             <div class="photo-fallback" id="ph-fallback">EH</div>
-            <img id="ph-img" src="" alt="Eko Harianto" fetchpriority="high" decoding="async"
+            <img id="ph-img" alt="Eko Harianto" fetchpriority="high" decoding="async"
               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;opacity:0;transition:opacity .4s ease;"
-              onload="this.style.opacity='1';document.getElementById('ph-fallback').style.opacity='0';"
-              onerror="this.remove();">
+              onload="this.style.opacity='1';document.getElementById('ph-fallback').style.opacity='0';">
           </div>
         </div>
         <div class="hero-stats">
@@ -2412,8 +2411,10 @@ function renderProfile(p) {
     if (match) {
       const fileId = match[1];
       const img = document.getElementById('ph-img');
+      if (!img) return;
       const primary   = `https://lh3.googleusercontent.com/d/${fileId}=w600`;
       const secondary = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+      // Set onerror BEFORE setting src so it's ready
       img.onerror = () => { img.onerror = null; img.src = secondary; };
       img.src = primary;
       // Also inject a <link rel="preload"> so browser fetches immediately
