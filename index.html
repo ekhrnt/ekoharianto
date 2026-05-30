@@ -1390,9 +1390,21 @@ a.testi-name-link:hover {
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 24px rgba(255,107,53,0.4);
   z-index: 500;
-  transition: transform .2s, box-shadow .2s;
+  animation: heartbeat 2s ease-in-out infinite;
 }
-.chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(255,107,53,0.5); }
+.chat-fab:hover {
+  animation: none;
+  transform: scale(1.1);
+  box-shadow: 0 6px 32px rgba(255,107,53,0.6);
+}
+@keyframes heartbeat {
+  0%   { transform: scale(1);    box-shadow: 0 4px 24px rgba(255,107,53,0.4); }
+  14%  { transform: scale(1.12); box-shadow: 0 6px 28px rgba(255,107,53,0.6); }
+  28%  { transform: scale(1);    box-shadow: 0 4px 24px rgba(255,107,53,0.4); }
+  42%  { transform: scale(1.08); box-shadow: 0 5px 26px rgba(255,107,53,0.5); }
+  70%  { transform: scale(1);    box-shadow: 0 4px 24px rgba(255,107,53,0.4); }
+  100% { transform: scale(1);    box-shadow: 0 4px 24px rgba(255,107,53,0.4); }
+}
 
 .chat-panel {
   position: fixed;
